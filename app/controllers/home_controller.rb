@@ -10,6 +10,10 @@ class HomeController < ApplicationController
   def new_excel_gen
   end
 
+  def new_source_trigger
+    @source_names = all_source_names
+  end
+
   def file_process_trigger
     entity_name = params[:entity_type]
     entity_profile = get_profile(entity_name)
@@ -28,6 +32,24 @@ class HomeController < ApplicationController
     output_file_name = "ingestion_report_#{Time.now.strftime('%H:%M:%S')}.xlsx"
     xlsx_package = generate_xlsx(file)
     send_data xlsx_package.to_stream.read, filename: output_file_name, type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  end
+
+  def process_sources_trigger
+    entity_name = params[:entity_type]
+    entity_profile = get_profile(entity_name)
+    batch_size = params[:batch_size].to_i
+    flag = get_flag_json(params[:flag])
+    selected_sources = params[:selected_order]
+    if selected_sources.present?
+      source_names = selected_sources.split(',')
+      output_file_name = "trig_msg_#{Time.now.strftime('%H:%M:%S')}"
+      file_content = trigger_msg_sources(entity_name, entity_profile, batch_size, flag, source_names)
+      content_string = file_content.join("\n")
+      send_data content_string, filename: "#{output_file_name}.txt", type: "text/plain"
+    else
+      flash[:alert] = "Select atleast one source from the list"
+      render 'home/index'
+    end
   end
 
   private
@@ -131,6 +153,31 @@ class HomeController < ApplicationController
       sl_no += 1
     end
     xlsx
+  end
+
+  def trigger_msg_sources(entity_name, entity_profile, batch_size, flag, source_names)
+    write_arr = []
+    sl_no = 1
+    source_names.each do |source_name|
+      write_arr << "#{sl_no}. #{source_name}\n\n\n"
+      trigger_msg_json = {
+        "meta": {
+          "SourceCode": source_name,
+          "SourceFilePath": 'replace_file_url',
+          "profile": entity_profile,
+          "batchId": "#{entity_name}:#{SecureRandom.uuid}"
+        },
+        "processRules": {
+          "batchSize": batch_size
+        }
+      }.as_json
+      flag.present? ? trigger_msg_json['processRules'].merge!(flag) : nil
+      write_arr << JSON.pretty_generate(trigger_msg_json, indent: '    ')
+      write_arr << "\n\n"
+      write_arr << '--------------------------------------------------------'
+      sl_no += 1
+    end
+    write_arr
   end
 
 end

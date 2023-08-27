@@ -1,0 +1,97 @@
+<section class="gradient-custom-blue">
+  <br>
+  <div class="container py-5">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-7">
+
+        <div class="card mb-5" style="border-radius: 15px;">
+          <div class="card-body p-4 text-md-center">
+            <h3 class="mb-3">Generate Trigger Message</h3>
+
+            <hr class="my-4">
+            <div class="justify-content-start align-items-center text-md-center">
+
+              <%= form_tag({ controller: "home", action: "process_sources_trigger" }, method: "post", multipart: true) do %>
+
+                <%= select_tag(:entity_type, options_for_select([["Select Entity Type", ""], ["Provider", "provider"], ["Facility", "facility"]], params[:entity_type]), class: "select form-select", required: true) %>
+                <br>
+
+                <div class="form-outline form-white mb-4">
+                  <%= number_field_tag :batch_size, nil, required: true, placeholder: 'Enter batch size', class: 'form-control' %>
+                </div>
+
+                <%= select_tag(:flag, options_for_select([["Select Flag", ""], ["No Flag", "NO_FLAG"], ["overwriteRecords", "OVERWRITE"], ["forceReMatchOnDupes", "FORCE"], ["overwriteRecords and forceReMatchOnDupes", "OVERWRITE_FORCE"]], params[:flag]), class: "select form-select", required: true) %>
+                <br>
+
+                <%= hidden_field_tag "selected_order", "", id: "selected_order" %>
+                <div class="container">
+                  <div class="row">
+                    <% @source_names.each do |source_name| %>
+                      <div class="col-md-6">
+                        <div class="form-check">
+                          <%= check_box_tag "items[]", source_name, false, class: "form-check-input", id: source_name %>
+                          <%= label_tag source_name, source_name, class: "form-check-label" %>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+
+                <br>
+                <div class="container text-center mb-4">
+                  <p id="count-list" class="badge bg-light text-dark">Total Selected:
+                    <span id="selected-items-count"></span></p>
+                  <ul id="selected-items-list" class="list-group list-group-numbered"></ul>
+                </div>
+
+
+                <%= submit_tag "Proceed", class: "btn btn-success" %>
+              <% end %>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const selectedOrderInput = document.getElementById("selected_order");
+        const selectedOrder = [];
+        const selectedItemsList = document.getElementById("selected-items-list");
+        const selectedItemsCount = document.getElementById("selected-items-count");
+        const countList = document.getElementById("count-list");
+        selectedItemsCount.innerHTML = 0;
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function () {
+                if (this.checked) {
+                    selectedOrder.push(this.value);
+                    updateSelectedItemsList();
+                } else {
+                    const index = selectedOrder.indexOf(this.value);
+                    if (index > -1) {
+                        selectedOrder.splice(index, 1);
+                        updateSelectedItemsList();
+                    }
+                }
+                selectedOrderInput.value = selectedOrder.join(",");
+            });
+        });
+
+        function updateSelectedItemsList() {
+            selectedItemsList.innerHTML = "";
+            selectedItemsCount.innerHTML = selectedOrder.length;
+            selectedOrder.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = item;
+                li.classList.add("list-group-item");
+                selectedItemsList.appendChild(li);
+            });
+        }
+    });
+</script>
