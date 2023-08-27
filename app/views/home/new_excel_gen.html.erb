@@ -13,9 +13,9 @@
 
               <%= form_tag({ controller: "home", action: "process_excel" }, method: "post", multipart: true) do %>
 
-                <p class="text-secondary">Content order => source_name  url date size</p>
                 <%= file_field_tag :file, class: "form-control", required: true %>
                 <br>
+                <p class="text-secondary" , style="font-size: 15px">Content order: source_name url date size</p>
                 <br>
 
                 <%= submit_tag "Proceed", class: "btn btn-success" %>
