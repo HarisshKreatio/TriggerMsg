@@ -1,0 +1,29 @@
+<section class="gradient-custom-blue">
+  <br>
+  <div class="container py-5">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-5">
+
+        <div class="card mb-5" style="border-radius: 15px;">
+          <div class="card-body p-4 text-md-center">
+            <h3 class="mb-3">Generate Ingestion Report</h3>
+
+            <hr class="my-4">
+            <div class="justify-content-start align-items-center text-md-center">
+
+              <%= form_tag({ controller: "home", action: "process_excel" }, method: "post", multipart: true) do %>
+
+                <p class="text-secondary">Content order => source_name  url date size</p>
+                <%= file_field_tag :file, class: "form-control" %>
+                <br>
+                <br>
+
+                <%= submit_tag "Proceed", class: "btn btn-success" %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

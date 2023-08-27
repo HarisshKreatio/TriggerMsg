@@ -1,0 +1,39 @@
+<section class="gradient-custom-blue">
+  <br>
+  <div class="container py-5">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-5">
+
+        <div class="card mb-5" style="border-radius: 15px;">
+          <div class="card-body p-4 text-md-center">
+            <h3 class="mb-3">Generate Trigger Message</h3>
+
+            <hr class="my-4">
+            <div class="justify-content-start align-items-center text-md-center">
+
+              <%= form_tag({ controller: "home", action: "file_process_trigger" }, method: "post", multipart: true) do %>
+
+                <%= select_tag(:entity_type, options_for_select([["Select Entity Type", ""], ["Provider", "provider"], ["Facility", "facility"]], params[:entity_type]), class: "select form-select", required: true) %>
+                <br>
+
+                <div class="form-outline form-white mb-4">
+                  <%= text_field_tag :batch_size, nil, required: true, placeholder: 'Enter batch size', class: 'form-control' %>
+                </div>
+
+                <%= select_tag(:flag, options_for_select([["Select Flag", ""], ["No Flag", "NO_FLAG"], ["overwriteRecords", "OVERWRITE"], ["forceReMatchOnDupes", "FORCE"], ["overwriteRecords and forceReMatchOnDupes", "OVERWRITE_FORCE"]], params[:flag]), class: "select form-select", required: true) %>
+                <br>
+
+                <p class="text-secondary">Content order => source_name  url date size</p>
+                <%= file_field_tag :file, class: "form-control" %>
+                <br>
+                <br>
+
+                <%= submit_tag "Proceed", class: "btn btn-success" %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
