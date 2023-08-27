@@ -11,12 +11,13 @@ class HomeController < ApplicationController
   end
 
   def file_process_trigger
-    entity_type = get_profile(params[:entity_type])
+    entity_name = params[:entity_type]
+    entity_profile = get_profile(entity_name)
     batch_size = params[:batch_size].to_i
     flag = get_flag_json(params[:flag])
     file = params[:file]
     output_file_name = "trig_msg_#{Time.now.strftime('%H:%M:%S')}"
-    file_content = generate_trigger_file(entity_type, batch_size, flag, file)
+    file_content = generate_trigger_file(entity_name, entity_profile, batch_size, flag, file)
     content_string = file_content.join("\n")
     send_data content_string, filename: "#{output_file_name}.txt", type: "text/plain"
   end
@@ -33,7 +34,7 @@ class HomeController < ApplicationController
   def get_flag_json(flag_type)
     case flag_type
     when 'NO_FLAG'
-      { 'overwriteRecords': true }.as_json
+      nil
     when 'OVERWRITE'
       { 'overwriteRecords': true }.as_json
     when 'FORCE'
@@ -67,7 +68,7 @@ class HomeController < ApplicationController
     sort_arr.sort_by { |_, _, _, size| size.to_f }
   end
 
-  def clean_up_fields(each_line_set)
+  def clean_up_fields(each_line_set, entity_name)
     source_name = each_line_set[0].downcase
     source_name = all_source_names.include?(source_name) ? source_name : 'not_valid_source'
     path = each_line_set[1]
@@ -75,22 +76,26 @@ class HomeController < ApplicationController
     date = each_line_set[2]
     size = each_line_set[3]
     file_name = File.basename(path)
-    batch_id = file_name.match(/(provider|facility):(.{1,36})/)[0] rescue SecureRandom.uuid
+    batch_id = if file_name.present? && (file_name.include?('provider:') || file_name.include?('facility:'))
+                 file_name.match(/(provider|facility):(.{1,36})/)[0] rescue "#{entity_name}:#{SecureRandom.uuid}"
+               else
+                 "#{entity_name}:#{SecureRandom.uuid}"
+               end
     [source_name, size, file_name, path, date, batch_id]
   end
 
-  def generate_trigger_file(entity_type, batch_size, flag, file)
+  def generate_trigger_file(entity_name, entity_profile, batch_size, flag, file)
     sorted_lines = file_read_sort(file)
     write_arr = []
     sl_no = 1
     sorted_lines.each do |each_line_set|
-      source_name, size, file_name, path, date, batch_id = clean_up_fields(each_line_set)
+      source_name, size, file_name, path, date, batch_id = clean_up_fields(each_line_set, entity_name)
       write_arr << "#{sl_no}. #{source_name} [#{size}, #{date}]\n\n\n"
       trigger_msg_json = {
         "meta": {
           "SourceCode": source_name,
           "SourceFilePath": path,
-          "profile": entity_type,
+          "profile": entity_profile,
           "batchId": batch_id
         },
         "processRules": {
@@ -118,7 +123,7 @@ class HomeController < ApplicationController
     row_num = 1
     sl_no = 1
     sorted_lines.each do |each_line_set|
-      source_name, size, file_name, path, date, batch_id = clean_up_fields(each_line_set)
+      source_name, size, file_name, path, date, batch_id = clean_up_fields(each_line_set, '')
       row_data = [sl_no, source_name, size, file_name, path, date, Date.today.strftime("%m/%d/%Y"), 'In Progress', 'In Progress']
       worksheet.add_row(row_data, style: row_style)
       row_num += 1

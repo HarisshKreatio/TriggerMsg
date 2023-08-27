@@ -14,7 +14,7 @@
               <%= form_tag({ controller: "home", action: "process_excel" }, method: "post", multipart: true) do %>
 
                 <p class="text-secondary">Content order => source_name  url date size</p>
-                <%= file_field_tag :file, class: "form-control" %>
+                <%= file_field_tag :file, class: "form-control", required: true %>
                 <br>
                 <br>
 

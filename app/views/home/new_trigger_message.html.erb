@@ -17,14 +17,14 @@
                 <br>
 
                 <div class="form-outline form-white mb-4">
-                  <%= text_field_tag :batch_size, nil, required: true, placeholder: 'Enter batch size', class: 'form-control' %>
+                  <%= number_field_tag :batch_size, nil, required: true, placeholder: 'Enter batch size', class: 'form-control' %>
                 </div>
 
                 <%= select_tag(:flag, options_for_select([["Select Flag", ""], ["No Flag", "NO_FLAG"], ["overwriteRecords", "OVERWRITE"], ["forceReMatchOnDupes", "FORCE"], ["overwriteRecords and forceReMatchOnDupes", "OVERWRITE_FORCE"]], params[:flag]), class: "select form-select", required: true) %>
                 <br>
 
                 <p class="text-secondary">Content order => source_name  url date size</p>
-                <%= file_field_tag :file, class: "form-control" %>
+                <%= file_field_tag :file, class: "form-control", required: true %>
                 <br>
                 <br>
 
