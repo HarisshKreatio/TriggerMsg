@@ -23,9 +23,15 @@
                 <%= select_tag(:flag, options_for_select([["Select Flag", ""], ["No Flag", "NO_FLAG"], ["overwriteRecords", "OVERWRITE"], ["forceReMatchOnDupes", "FORCE"], ["overwriteRecords and forceReMatchOnDupes", "OVERWRITE_FORCE"]], params[:flag]), class: "select form-select", required: true) %>
                 <br>
 
-                <p class="text-secondary">Content order => source_name  url date size</p>
+                <div class="form form-switch mb-4">
+                  <%= check_box_tag :batch_id_gen, nil, true, class: 'form-check-input' %>
+                  <label class="form-check-label" data-bs-toggle="tooltip" title="It can generate unique batchId if turned off">Fetch
+                    batchId from url</label>
+                </div>
+
                 <%= file_field_tag :file, class: "form-control", required: true %>
                 <br>
+                <p class="text-secondary" , style="font-size: 15px">Content order: source_name url date size</p>
                 <br>
 
                 <%= submit_tag "Proceed", class: "btn btn-success" %>
