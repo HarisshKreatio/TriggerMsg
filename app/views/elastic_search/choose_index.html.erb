@@ -1,0 +1,50 @@
+<section class="vh-100 bg-light">
+
+  <div class="container">
+    <div class="row">
+      <div class="col-6">
+        <div class="container">
+          <table class="table table-bordered mt-20">
+            <thead>
+            <tr>
+              <th scope="col">Provider</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @provider_indexes.each do |index| %>
+              <tr>
+                <td><%= link_to index, elasticsearch_search_form_path(index_name: index), class: "text-dark", style: "text-decoration:none;" %></td>
+              </tr>
+            <% end %>
+            </tbody>
+
+          </table>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="container">
+          <table class="table table-bordered mt-20">
+            <thead>
+            <tr>
+              <th scope="col">Facility</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @facility_indexes.each do |index| %>
+              <tr>
+                <td><%= link_to index, elasticsearch_search_form_path(index_name: index), class: "text-dark", style: "text-decoration:none;" %></td>
+              </tr>
+            <% end %>
+            </tbody>
+
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
