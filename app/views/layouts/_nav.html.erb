@@ -2,4 +2,12 @@
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Clarity</a>
   </div>
+  <ul class="navbar-nav mb-2 mb-lg-0">
+    <li class="nav-item ">
+      <%# binding.pry %>
+      <% if session[:elastic_ip].present? %>
+        <%= button_to 'Logout', elasticsearch_logout_path, method: :delete %>
+      <% end %>
+    </li>
+  </ul>
 </nav>
