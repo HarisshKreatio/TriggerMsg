@@ -17,7 +17,6 @@ class ElasticSearchController < ApplicationController
     begin
       Chewy.client.cluster.health
       create_session(params)
-      $chewy_client = Chewy.client
       flash[:notice] = "Connection Successful"
       redirect_to elasticsearch_choose_index_path
     rescue
@@ -49,15 +48,34 @@ class ElasticSearchController < ApplicationController
   end
 
   def search_form
-    # binding.pry
-    # session[:index_name] = params[:index_name]
-    # $chewy_client
-    # BaseModel.index_name(session[:index_name])
-    # puts BaseModel.count
-    # redirect_to elasticsearch_login_path
+    session[:index_name] = params[:index_name]
+    set_chewy_client_for_execution(session[:elastic_ip], session[:username], session[:password])
+    BaseModel.index_name(session[:index_name])
+    @doc_count = BaseModel.exists? ? BaseModel.count : "Index doesn't exist"
+  end
+
+  def clear_search_session
+    input_sessions = %w[inputName inputNpi inputSource inputUpdatedDate inputStableId inputLocStableId inputAddrText inputAddrCity inputAddrState inputAddrZip]
+    input_sessions.map { |input| session[input] = nil }
+    render status: :ok, body: nil
+  end
+
+  def search_results
+    input_sessions = %w[inputName inputNpi inputSource inputUpdatedDate inputStableId inputLocStableId inputAddrText inputAddrCity inputAddrState inputAddrZip]
+    input_sessions.map { |input| session[input] = params[input] }
   end
 
   private
+
+  def set_chewy_client_for_execution(elastic_ip, username, password)
+    if elastic_ip && username && password
+      Chewy.settings = { host: elastic_ip , user: username, password: password, request_timeout: 7 }
+      Chewy.current[:chewy_client] = Chewy::ElasticClient.new
+    else
+      Chewy.settings = { host: elastic_ip, request_timeout: 7 }
+      Chewy.current[:chewy_client] = Chewy::ElasticClient.new
+    end
+  end
 
   def set_chewy_client(params)
     ip_address = params[:ip_address]

@@ -1,1 +1,106 @@
-Hii Search
+<section class="vh-100 bg-light">
+
+  <h2 class="fw-bold mb-2 text-center pt-5">Input Search Values</h2>
+  <p class="text-dark-50 mb-5 text-center"><%= session[:index_name] %> | <%= @doc_count %></p>
+
+  <div class="container p-3">
+
+    <%= form_tag({ controller: "elastic_search", action: "search_results" }, method: "get", multipart: true, class: "row g-3", id: "myForm") do %>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%# binding.pry %>
+          <%= text_field_tag :inputName, session[:inputName], placeholder: 'Name', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputNpi, session[:inputNpi], placeholder: 'NPI', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputSource, session[:inputSource], placeholder: 'Source', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputUpdatedDate, session[:inputUpdatedDate], placeholder: 'Updated Date', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputStableId, session[:inputStableId], placeholder: 'StableId', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputLocStableId, session[:inputLocStableId], placeholder: 'Location StableId', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputAddrText, session[:inputAddrText], placeholder: 'Address Text', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputAddrCity, session[:inputAddrCity], placeholder: 'City', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputAddrState, session[:inputAddrState], placeholder: 'State', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputAddrZip, session[:inputAddrZip], placeholder: 'Zip', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="container text-center">
+        <button type="reset" class="btn btn-danger text-center col-md-2" id="reset-btn">Reset</button>
+        <%= submit_tag "Search", class: "btn btn-primary text-center col-md-2" %>
+      </div>
+
+    <% end %>
+  </div>
+
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('myForm').addEventListener('reset', function() {
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            fetch('/elasticsearch/clear_search_session', {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': token
+                }
+            }).then(response => {
+                if (response.ok) {
+                    document.querySelector('#myForm input[name="inputName"]').value = '';
+                    document.querySelector('#myForm input[name="inputNpi"]').value = '';
+                    document.querySelector('#myForm input[name="inputSource"]').value = '';
+                    document.querySelector('#myForm input[name="inputUpdatedDate"]').value = '';
+                    document.querySelector('#myForm input[name="inputStableId"]').value = '';
+                    document.querySelector('#myForm input[name="inputLocStableId"]').value = '';
+                    document.querySelector('#myForm input[name="inputAddrText"]').value = '';
+                    document.querySelector('#myForm input[name="inputAddrCity"]').value = '';
+                    document.querySelector('#myForm input[name="inputAddrState"]').value = '';
+                    document.querySelector('#myForm input[name="inputAddrZip"]').value = '';
+                }
+            });
+        });
+    });
+</script>

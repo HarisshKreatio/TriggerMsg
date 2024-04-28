@@ -2,9 +2,9 @@ module ChewyOverride
 
   Chewy::Index::Actions::ClassMethods.prepend(ChewyOverride)
 
-  def exists?
-    print_error('exists?')
-  end
+  # def exists?
+  #   print_error('exists?')
+  # end
 
   def create(*args, **kwargs)
     print_error('create')
