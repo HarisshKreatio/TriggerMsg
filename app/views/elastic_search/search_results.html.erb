@@ -1,1 +1,49 @@
-Hii Its working
+<section class="vh-100 bg-light">
+
+
+  <div class="container p-4">
+
+
+      <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+          <th scope="col" class="col">Score</th>
+          <th scope="col" class="col">TotalDoc</th>
+          <th scope="col" class="col-4">StableId</th>
+          <th scope="col">Name</th>
+          <th scope="col">NPI</th>
+<!--          <th scope="col">Address</th>-->
+<!--          <th scope="col">State</th>-->
+<!--          <th scope="col">City</th>-->
+<!--          <th scope="col">PostalCode</th>-->
+        </tr>
+        </thead>
+
+        <% @response['hits']['hits'].each do |each_doc| %>
+          <tbody>
+          <tr>
+            <td><%= each_doc["_score"] %></td>
+            <td><%= each_doc["_source"]['organizationAffiliation'].count %></td>
+            <td><%= each_doc["_source"]["stableId"] %></td>
+            <td><%= each_doc["_source"]['organizationAffiliation'][0]['facility']['name'] %></td>
+            <td><%= each_doc["_source"]['organizationAffiliation'][0]['facility']['identifier'].map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
+<!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['line'] %></td>-->
+<!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['state'] %></td>-->
+<!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['city'] %></td>-->
+<!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['postalCode'] %></td>-->
+          </tr>
+          </tbody>
+        <% end %>
+
+      </table>
+
+
+
+
+
+  </div>
+
+
+
+
+</section>
