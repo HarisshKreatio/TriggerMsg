@@ -17,5 +17,6 @@ Rails.application.routes.draw do
   get 'elasticsearch/search_form', to: 'elastic_search#search_form'
   delete 'elasticsearch/clear_search_session', to: 'elastic_search#clear_search_session'
   get 'elasticsearch/search_results', to: 'elastic_search#search_results'
+  get 'elasticsearch/view_cluster', to: 'elastic_search#view_cluster'
 
 end

@@ -72,6 +72,12 @@ class ElasticSearchController < ApplicationController
     @matched_doc = @response['hits']['hits']
   end
 
+  def view_cluster
+    set_chewy_client_for_execution(session[:elastic_ip], session[:elastic_username], session[:elastic_password])
+    BaseModel.index_name(session[:index_name])
+    @index_document = BaseModel.find(params[:stable_id])._data
+  end
+
   private
 
   def set_chewy_client_for_execution(elastic_ip, username, password)

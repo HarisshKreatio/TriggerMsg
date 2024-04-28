@@ -4,46 +4,50 @@
   <div class="container p-4">
 
 
-      <table class="table table-bordered table-hover">
-        <thead>
+    <table class="table table-bordered table-hover">
+      <thead>
+      <tr>
+        <th scope="col" class="col">Score</th>
+        <th scope="col" class="col">TotalDoc</th>
+        <th scope="col" class="col-4">StableId</th>
+        <th scope="col">Name</th>
+        <th scope="col">NPI</th>
+        <th scope="col">Action</th>
+        <!--          <th scope="col">Address</th>-->
+        <!--          <th scope="col">State</th>-->
+        <!--          <th scope="col">City</th>-->
+        <!--          <th scope="col">PostalCode</th>-->
+      </tr>
+      </thead>
+
+      <% @response['hits']['hits'].each do |each_doc| %>
+        <tbody>
         <tr>
-          <th scope="col" class="col">Score</th>
-          <th scope="col" class="col">TotalDoc</th>
-          <th scope="col" class="col-4">StableId</th>
-          <th scope="col">Name</th>
-          <th scope="col">NPI</th>
-<!--          <th scope="col">Address</th>-->
-<!--          <th scope="col">State</th>-->
-<!--          <th scope="col">City</th>-->
-<!--          <th scope="col">PostalCode</th>-->
+          <td><%= each_doc["_score"] %></td>
+          <td><%= each_doc["_source"]['organizationAffiliation'].count %></td>
+          <td><%= each_doc["_source"]["stableId"] %></td>
+          <td><%= each_doc["_source"]['organizationAffiliation'][0]['facility']['name'] %></td>
+          <td><%= each_doc["_source"]['organizationAffiliation'][0]['facility']['identifier'].map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
+          <td>
+            <a href="<%= elasticsearch_view_cluster_path(stable_id: each_doc["_source"]["stableId"]) %>" class="text-dark tooltip-arrow bs-tooltip-top" data-bs-toggle="tooltip" data-bs-placement="top" title="view cluster">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-text" viewBox="0 0 16 16">
+                <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
+                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>
+              </svg>
+            </a>
+          </td>
+          <!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['line'] %></td>-->
+          <!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['state'] %></td>-->
+          <!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['city'] %></td>-->
+          <!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['postalCode'] %></td>-->
         </tr>
-        </thead>
+        </tbody>
+      <% end %>
 
-        <% @response['hits']['hits'].each do |each_doc| %>
-          <tbody>
-          <tr>
-            <td><%= each_doc["_score"] %></td>
-            <td><%= each_doc["_source"]['organizationAffiliation'].count %></td>
-            <td><%= each_doc["_source"]["stableId"] %></td>
-            <td><%= each_doc["_source"]['organizationAffiliation'][0]['facility']['name'] %></td>
-            <td><%= each_doc["_source"]['organizationAffiliation'][0]['facility']['identifier'].map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
-<!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['line'] %></td>-->
-<!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['state'] %></td>-->
-<!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['city'] %></td>-->
-<!--            <td><%#= each_doc["_source"]['organizationAffiliation'][0]['location'][0]['address']['postalCode'] %></td>-->
-          </tr>
-          </tbody>
-        <% end %>
-
-      </table>
-
-
-
+    </table>
 
 
   </div>
-
-
 
 
 </section>
