@@ -1,0 +1,87 @@
+<% if @doc_count.present? %>
+
+  <h2 class="fw-bold mb-2 text-center pt-5">Input Search Values</h2>
+  <p class="text-dark-50 mb-5 text-center"><%= session[:index_name] %> | <%= @doc_count %></p>
+
+  <div class="container p-3">
+
+    <%= form_tag({ controller: "elastic_search", action: "search_results" }, method: "get", multipart: true, class: "row g-3", id: "myForm") do %>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%# binding.pry %>
+          <%= text_field_tag :inputName, session[:inputName], placeholder: 'Name', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputNpi, session[:inputNpi], placeholder: 'NPI', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputSource, session[:inputSource], placeholder: 'Source', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputUpdatedDate, session[:inputUpdatedDate], placeholder: 'Updated Date', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputStableId, session[:inputStableId], placeholder: 'StableId', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputLocStableId, session[:inputLocStableId], placeholder: 'Location StableId', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputAddrText, session[:inputAddrText], placeholder: 'Address Text', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputAddrCity, session[:inputAddrCity], placeholder: 'City', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputAddrState, session[:inputAddrState], placeholder: 'State', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputAddrZip, session[:inputAddrZip], placeholder: 'Zip', class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="form-outline form-white mb-4 tooltip-arrow bs-tooltip-top" data-bs-toggle="tooltip" data-bs-delay="1" data-bs-placement="top" title="Default is 10,000">
+          <%= number_field_tag :inputSize, session[:inputSize], placeholder: 'Search size', class: 'form-control'  %>
+        </div>
+      </div>
+
+      <div class="container text-center">
+        <button type="reset" class="btn btn-danger text-center col-md-2" id="reset-btn">Reset</button>
+        <%= submit_tag "Search", class: "btn btn-primary text-center col-md-2" %>
+      </div>
+
+    <% end %>
+  </div>
+
+<% else %>
+  <h2 class="fw-bold mb-2 text-center pt-5">Index doesn't exist</h2>
+<% end %>

@@ -1,41 +1,13 @@
 <section class="vh-100 bg-light">
 
-
-  <div class="container p-4">
-
-    <h2 class="fw-bold mb-2 text-center pt-5">Facility Cluster</h2>
-    <p class="text-dark-50 mb-1 text-center"><%= @index_document['_source']['stableId'] %> </p>
-    <p class="text-dark-50 mb-5 text-center">Total Records - <%= @index_document['_source']['organizationAffiliation'].count %></p>
-
-    <table class="table table-bordered table-hover">
-      <thead>
-      <tr>
-        <th scope="col">Name</th>
-        <th scope="col">NPI</th>
-        <th scope="col">Address</th>
-        <th scope="col">State</th>
-        <th scope="col">City</th>
-        <th scope="col">PostalCode</th>
-      </tr>
-      </thead>
-
-      <% @index_document['_source']['organizationAffiliation'].each do |each_doc| %>
-        <tbody>
-        <tr>
-          <td><%= each_doc['facility']['name'] %></td>
-          <td><%= each_doc['facility']['identifier'].map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
-          <td><%= each_doc['location'][0]['address']['line'] %></td>
-          <td><%= each_doc['location'][0]['address']['state'] %></td>
-          <td><%= each_doc['location'][0]['address']['city'] %></td>
-          <td><%= each_doc['location'][0]['address']['postalCode'] %></td>
-        </tr>
-        </tbody>
-      <% end %>
-
-    </table>
-
-
-  </div>
-
+  <% if session[:entity_type] == 'provider' %>
+    <%= render 'elastic_search/view_cluster/provider_view_cluster' %>
+  <% elsif session[:entity_type] == 'facility' %>
+    <%= render 'elastic_search/view_cluster/facility_view_cluster' %>
+  <% elsif session[:entity_type] == 'provider_single_doc' %>
+    <%= render 'elastic_search/view_cluster/provider_single_doc_view_cluster' %>
+  <% elsif session[:entity_type] == 'facility_single_doc' %>
+    <%= render 'elastic_search/view_cluster/facility_single_doc_view_cluster' %>
+  <% end %>
 
 </section>
