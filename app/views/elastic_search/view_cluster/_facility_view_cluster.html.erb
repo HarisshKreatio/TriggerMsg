@@ -33,12 +33,12 @@
       <tbody>
       <tr>
         <td><%= count += 1 %></td>
-        <td><%= each_doc['facility']['name'] %></td>
-        <td><%= each_doc['facility']['identifier'].map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
-        <td><%= each_doc['location'][0]['address']['line'] %></td>
-        <td><%= each_doc['location'][0]['address']['state'] %></td>
-        <td><%= each_doc['location'][0]['address']['city'] %></td>
-        <td><%= each_doc['location'][0]['address']['postalCode'] %></td>
+        <td><%= each_doc&.dig('facility', 'name') %></td>
+        <td><%= each_doc&.dig('facility', 'identifier')&.map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
+        <td><%= each_doc&.dig('location', 0, 'address', 'line') %></td>
+        <td><%= each_doc&.dig('location', 0, 'address', 'state') %></td>
+        <td><%= each_doc&.dig('location', 0, 'address', 'city') %></td>
+        <td><%= each_doc&.dig('location', 0, 'address', 'postalCode') %></td>
       </tr>
       </tbody>
     <% end %>
