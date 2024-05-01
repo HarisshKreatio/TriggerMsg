@@ -13,6 +13,17 @@
 
     <textarea id="search-query" style="display: none;"><%= JSON.pretty_generate(@search_query) %></textarea>
 
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <p class="text-dark-50 mb-1">Matched Count: <%= @response['hits']['hits'].count %></p>
+        </div>
+        <div class="col text-end">
+          <p class="text-dark-50 mb-1">Size: <%= session[:inputSize] %></p>
+        </div>
+      </div>
+    </div>
+
     <% if session[:entity_type] == 'provider' %>
       <%= render 'elastic_search/search_results/provider_search_results' %>
     <% elsif session[:entity_type] == 'facility' %>
