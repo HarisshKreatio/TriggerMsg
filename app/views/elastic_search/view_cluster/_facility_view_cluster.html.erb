@@ -2,7 +2,17 @@
 
   <h2 class="fw-bold mb-2 text-center pt-1">Facility Cluster</h2>
   <p class="text-dark-50 mb-1 text-center"><%= @index_document['_source']['stableId'] %> </p>
-  <p class="text-dark-50 mb-5 text-center">Total Records - <%= @index_document['_source']['organizationAffiliation'].count %></p>
+
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <p class="text-dark-50 mb-1">Total Records: <%= @index_document['_source']['organizationAffiliation'].count %></p>
+      </div>
+      <div class="col text-end">
+        <p class="text-dark-50 mb-1"><%= session[:index_name] %></p>
+      </div>
+    </div>
+  </div>
 
   <table class="table table-bordered table-hover">
     <thead>
