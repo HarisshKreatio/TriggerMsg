@@ -1,9 +1,9 @@
 <% if @doc_count.present? %>
 
-  <h2 class="fw-bold mb-2 text-center pt-5">Input Search Values</h2>
+  <h2 class="fw-bold mb-2 text-center pt-3">Input Search Values</h2>
   <p class="text-dark-50 mb-5 text-center"><%= session[:index_name] %> | <%= @doc_count %></p>
 
-  <div class="container p-3">
+  <div class="container p-2">
 
     <%= form_tag({ controller: "elastic_search", action: "search_results" }, method: "get", multipart: true, class: "row g-3", id: "myForm") do %>
 
