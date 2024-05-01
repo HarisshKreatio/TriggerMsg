@@ -49,10 +49,10 @@ class ElasticSearchController < ApplicationController
     input_sessions = %i[inputName inputNpi inputSource inputUpdatedDate inputStableId inputLocStableId inputAddrText inputAddrCity inputAddrState inputAddrZip inputSize]
     input_sessions.map { |input| session[input] = params[input] }
     session[:inputSize] = params[:inputSize].present? ? params[:inputSize].to_i : 10000
-    search_query = form_elastic_query(params)
+    @search_query = form_elastic_query(params)
     set_chewy_client_for_execution(session[:elastic_ip], session[:elastic_username], session[:elastic_password])
     BaseModel.index_name(session[:index_name])
-    @response = Chewy.client.search(index: session[:index_name], body: search_query)
+    @response = Chewy.client.search(index: session[:index_name], body: @search_query)
     @matched_doc_count = @response['hits']['total']['value']
     @matched_doc = @response['hits']['hits']
   end

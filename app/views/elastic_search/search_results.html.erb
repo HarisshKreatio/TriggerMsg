@@ -1,13 +1,82 @@
 <section class="vh-100 bg-light">
 
-  <% if session[:entity_type] == 'provider' %>
-    <%= render 'elastic_search/search_results/provider_search_results' %>
-  <% elsif session[:entity_type] == 'facility' %>
-    <%= render 'elastic_search/search_results/facility_search_results' %>
-  <% elsif session[:entity_type] == 'provider_single_doc' %>
-    <%= render 'elastic_search/search_results/provider_single_doc_search_results' %>
-  <% elsif session[:entity_type] == 'facility_single_doc' %>
-    <%= render 'elastic_search/search_results/facility_single_doc_search_results' %>
-  <% end %>
-  
+  <div class="container p-4">
+
+    <h2 class="fw-bold mb-2 text-center pt-1">Search Results</h2>
+    <p class="text-dark-50 mb-2 text-center"><%= session[:index_name] %></p>
+
+    <p class="text-dark-50 mb-5 text-center">
+      <button type="button" class="btn btn-primary p-1" data-bs-toggle="modal" data-bs-target="#searchquery">
+        View Query
+      </button>
+    </p>
+
+    <textarea id="search-query" style="display: none;"><%= JSON.pretty_generate(@search_query) %></textarea>
+
+    <% if session[:entity_type] == 'provider' %>
+      <%= render 'elastic_search/search_results/provider_search_results' %>
+    <% elsif session[:entity_type] == 'facility' %>
+      <%= render 'elastic_search/search_results/facility_search_results' %>
+    <% elsif session[:entity_type] == 'provider_single_doc' %>
+      <%= render 'elastic_search/search_results/provider_single_doc_search_results' %>
+    <% elsif session[:entity_type] == 'facility_single_doc' %>
+      <%= render 'elastic_search/search_results/facility_single_doc_search_results' %>
+    <% end %>
+
+  </div>
+
+  <!-- Search Query Modal -->
+  <div class="modal fade modal-lg" id="searchquery" data-bs-keyboard="false" tabindex="-1" aria-labelledby="searchqueryLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-dark" id="searchqueryLabel">Seach Query</h5>
+
+          <div class="ms-3">
+            <button class="btn p-1 text-center" onclick="copyContent()" id="copy-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+              </svg>
+              Copy Query
+            </button>
+          </div>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <pre id="json-output"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </section>
+
+
+<script>
+    function getJson() {
+        try {
+            return JSON.parse($('#search-query').val());
+        } catch (ex) {
+            alert('Wrong JSON Format: ' + ex);
+        }
+    }
+
+    document.getElementById("json-output").textContent = JSON.stringify(getJson(), undefined, 2);
+
+    let text = document.getElementById('json-output').innerHTML;
+    const copyContent = async () => {
+        try {
+            await navigator.clipboard.writeText(text);
+            var originalCopyBtn = document.getElementById('copy-button').innerHTML
+            document.getElementById('copy-button').innerHTML = 'Copied';
+            setTimeout(() => {
+                document.getElementById('copy-button').innerHTML = originalCopyBtn;
+            }, 1000);
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+        }
+    }
+
+</script>
