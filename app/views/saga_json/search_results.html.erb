@@ -1,0 +1,130 @@
+<section class="vh-100 bg-light">
+
+  <div class="container p-4">
+
+    <h2 class="fw-bold mb-2 text-center pt-1">Search Results</h2>
+
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <p class="text-dark-50 mb-1">Matched Count: <%= @result.count %></p>
+        </div>
+        <div class="col text-end">
+          <p class="text-dark-50 mb-1">Size: <%= session[:inputSize] %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="scrollme">
+      <table class="table table-bordered table-hover">
+        <thead class="table-head">
+        <tr>
+          <th scope="col" class="col">SL.No</th>
+          <th scope="col" class="col">BatchId</th>
+          <th scope="col" class="list-head text-left">SourceKey</th>
+          <th scope="col" class="col">CreatedTs</th>
+          <th scope="col" class="col">Status</th>
+          <th scope="col" class="col">PlanYear</th>
+          <th scope="col" class="col">SourceTotalRows</th>
+          <th scope="col" class="col">SourceFilePath</th>
+          <th scope="col">Action</th>
+        </tr>
+        </thead>
+
+        <% count = 0 %>
+
+        <% @result.each do |each_json| %>
+          <tbody>
+          <tr>
+            <td><%= count += 1 %></td>
+            <td><%= each_json&.dig('batchId') %></td>
+            <td><%= each_json&.dig('sourceKey') %></td>
+            <td><%= each_json&.dig('createdTs') %></td>
+            <td><%= each_json&.dig('status') %></td>
+            <td><%= each_json&.dig('attrs', 'planYear') %></td>
+            <td><%= each_json&.dig('sourceTotalRows') %></td>
+            <td><%= each_json&.dig('sourceFilePath') %></td>
+            <td>
+              <textarea id="view-saga-json-<%= each_json&.dig('batchId') %>" style="display: none;"><%= JSON.pretty_generate(@result.map { |i| i if i['batchId'].eql?(each_json&.dig('batchId')) }.compact[0]) %></textarea>
+
+              <p class="text-dark-50 mb-5 text-center">
+                <button type="button" class="btn btn-primary p-1" data-bs-toggle="modal" data-bs-target="#viewsagajson" value="<%= each_json&.dig('batchId') %>" onclick="getIndex(this)">
+                  View Json
+                </button>
+              </p>
+
+              <a href="<%= elasticsearch_view_cluster_path %>" class="text-dark tooltip-arrow bs-tooltip-top" data-bs-toggle="tooltip modal" data-bs-placement="top" title="view cluster" data-bs-target="#searchquery">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-text" viewBox="0 0 16 16">
+                  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
+                  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>
+                </svg>
+              </a>
+            </td>
+          </tr>
+          </tbody>
+        <% end %>
+
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Saga Json Modal -->
+  <div class="modal fade modal-lg" id="viewsagajson" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewsagajsonLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-dark" id="viewsagajsonLabel">Saga Json</h5>
+
+          <div class="ms-3">
+            <button class="btn p-1 text-center" onclick="copyContent()" id="copy-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+              </svg>
+              Copy Json
+            </button>
+          </div>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <pre id="json-output-saga"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<script>
+    function getJsonForSaga(indexValue) {
+        try {
+            return JSON.parse($('#view-saga-json-' + indexValue).val());
+        } catch (ex) {
+            alert('Wrong JSON Format: ' + ex);
+        }
+    }
+
+    function getIndex(button) {
+        var indexValue = button.value;
+        document.getElementById("json-output-saga").textContent = JSON.stringify(getJsonForSaga(indexValue), undefined, 2);
+    }
+
+    const copyContent = async () => {
+        try {
+            let text = document.getElementById('json-output-saga').innerHTML;
+            await navigator.clipboard.writeText(text);
+            var originalCopyBtn = document.getElementById('copy-button').innerHTML
+            document.getElementById('copy-button').innerHTML = 'Copied';
+            setTimeout(() => {
+                document.getElementById('copy-button').innerHTML = originalCopyBtn;
+            }, 1000);
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+        }
+    }
+
+</script>
+

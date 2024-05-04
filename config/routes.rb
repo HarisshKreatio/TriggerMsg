@@ -19,4 +19,12 @@ Rails.application.routes.draw do
   get 'elasticsearch/search_results', to: 'elastic_search#search_results'
   get 'elasticsearch/view_cluster', to: 'elastic_search#view_cluster'
 
+  get 'saga_json/login', to: 'saga_json#login'
+  post 'saga_json/authenticate', to: 'saga_json#authenticate'
+  delete 'saga_json/logout', to: 'saga_json#logout'
+
+  get 'saga_json/search_form', to: 'saga_json#search_form'
+  delete 'saga_json/clear_search_session', to: 'saga_json#clear_search_session'
+  get 'saga_json/search_results', to: 'saga_json#search_results'
+
 end

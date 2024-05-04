@@ -22,6 +22,16 @@
                 </div>
               <% end %>
 
+              <% if session[:saga_json_url].present? %>
+                <div class="form-outline form-white mb-4">
+                  <%= link_to 'Saga Json Viewer', saga_json_search_form_path, class: "btn btn-primary" %>
+                </div>
+              <% else %>
+                <div class="form-outline form-white mb-4">
+                  <%= link_to 'Saga Json Viewer', saga_json_login_path, class: "btn btn-primary" %>
+                </div>
+              <% end %>
+
                 <div class="form-outline form-white mb-4">
                   <%= link_to 'Generate Trigger Message Based On File', home_new_trigger_message_path, class: "btn btn-primary" %>
                 </div>

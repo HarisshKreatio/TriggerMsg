@@ -106,6 +106,9 @@ class ElasticSearchController < ApplicationController
     session[:elastic_password] = params[:password]
     session[:elastic_ip] = "#{params[:ip_address]}:#{params[:port]}"
     session[:logged_in] = true
+
+    session[:saga_json_url] = nil
+    session[:saga_json_key] = nil
   end
 
   def delete_session

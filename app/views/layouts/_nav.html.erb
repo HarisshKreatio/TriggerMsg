@@ -2,16 +2,27 @@
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Clarity</a>
   </div>
-  <ul class="navbar-nav mb-2 mb-lg-0">
-    <li class="nav-item ">
-      <% if session[:elastic_ip].present? %>
+
+  <% if session[:elastic_ip].present? %>
+    <ul class="navbar-nav mb-2 mb-lg-0">
+      <li class="nav-item ">
         <h6 class="text-white p-1"><%= session[:elastic_ip] %></h6>
-      <% end %>
-    </li>
-    <li class="nav-item ">
-      <% if session[:elastic_ip].present? %>
+      </li>
+      <li class="nav-item ">
         <%= button_to 'Logout', elasticsearch_logout_path, method: :delete %>
-      <% end %>
-    </li>
-  </ul>
+      </li>
+    </ul>
+  <% end %>
+
+  <% if session[:saga_json_url].present? %>
+    <ul class="navbar-nav mb-2 mb-lg-0">
+      <li class="nav-item ">
+        <h6 class="text-white p-1"><%= session[:saga_json_url].gsub('https://', '').gsub('-api.azurewebsites.net', '').gsub('-', '.') %></h6>
+      </li>
+      <li class="nav-item ">
+        <%= button_to 'Logout', saga_json_logout_path, method: :delete %>
+      </li>
+    </ul>
+  <% end %>
+
 </nav>
