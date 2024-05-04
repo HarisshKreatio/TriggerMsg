@@ -49,7 +49,7 @@ class ElasticSearchController < ApplicationController
     input_sessions = %i[inputName inputNpi inputSource inputUpdatedDate inputStableId inputLocStableId inputAddrText inputAddrCity inputAddrState inputAddrZip inputSize]
     input_sessions.map { |input| session[input] = params[input] }
     session[:inputSize] = params[:inputSize].present? ? params[:inputSize].to_i : 10000
-    @search_query = form_elastic_query(params)
+    @search_query = form_elastic_query(params, session[:entity_type])
     set_chewy_client_for_execution(session[:elastic_ip], session[:elastic_username], session[:elastic_password])
     BaseModel.index_name(session[:index_name])
     @response = Chewy.client.search(index: session[:index_name], body: @search_query)
@@ -60,7 +60,12 @@ class ElasticSearchController < ApplicationController
   def view_cluster
     set_chewy_client_for_execution(session[:elastic_ip], session[:elastic_username], session[:elastic_password])
     BaseModel.index_name(session[:index_name])
-    @index_document = BaseModel.find(params[:stable_id])._data
+    begin
+      @index_document = BaseModel.find(params[:doc_id])._data
+    rescue
+      flash[:alert] = "Document not found"
+      redirect_to elasticsearch_choose_index_path
+    end
   end
 
   private
@@ -174,7 +179,7 @@ class ElasticSearchController < ApplicationController
     end
   end
 
-  def form_elastic_query(params)
+  def form_elastic_query(params, entity_type)
     must = []
     must << ElasticSearchHelper::Facility.name(params[:inputName]) if params[:inputName].present?
     must << ElasticSearchHelper::Facility.identifier(params[:inputNpi]) if params[:inputNpi].present?
@@ -192,19 +197,11 @@ class ElasticSearchController < ApplicationController
     search_size = params[:inputSize].present? ? params[:inputSize].to_i : 10000
 
     if must.present?
-      {
-        "size": search_size,
-        "query": {
-          "nested": {
-            "path": "organizationAffiliation",
-            "query": {
-              "bool": {
-                "must": must
-              }
-            }
-          }
-        }
-      }
+      if entity_type == 'facility'
+        query_for_facility(search_size, must)
+      elsif entity_type == 'facility_single_doc'
+        query_for_facility_single_doc(search_size, must)
+      end
     else
       {
         "size": search_size,
@@ -213,7 +210,34 @@ class ElasticSearchController < ApplicationController
         }
       }
     end
+  end
 
+  def query_for_facility(search_size, must)
+    {
+      "size": search_size,
+      "query": {
+        "nested": {
+          "path": "organizationAffiliation",
+          "query": {
+            "bool": {
+              "must": must
+            }
+          }
+        }
+      }
+    }
+  end
+
+  def query_for_facility_single_doc(search_size, must)
+    must = JSON.parse(must.to_json.gsub('organizationAffiliation.', ''))
+    {
+      "size": search_size,
+      "query": {
+        "bool": {
+          "must": must
+        }
+      }
+    }
   end
 
 end
