@@ -9,25 +9,22 @@
         <div class="col">
           <p class="text-dark-50 mb-1">Matched Count: <%= @result.count %></p>
         </div>
-        <div class="col text-end">
-          <p class="text-dark-50 mb-1">Size: <%= session[:inputSize] %></p>
-        </div>
       </div>
     </div>
 
     <div class="scrollme">
-      <table class="table table-bordered table-hover">
+      <table class="table table-bordered table-hover" style="width: 200% !important;">
         <thead class="table-head">
         <tr>
-          <th scope="col" class="col">SL.No</th>
-          <th scope="col" class="col">BatchId</th>
-          <th scope="col" class="list-head text-left">SourceKey</th>
-          <th scope="col" class="col">CreatedTs</th>
-          <th scope="col" class="col">Status</th>
-          <th scope="col" class="col">PlanYear</th>
-          <th scope="col" class="col">SourceTotalRows</th>
-          <th scope="col" class="col">SourceFilePath</th>
-          <th scope="col">Action</th>
+          <th>SL.No</th>
+          <th>BatchId</th>
+          <th>SourceKey</th>
+          <th>CreatedTs</th>
+          <th>Status</th>
+          <th>PlanYear</th>
+          <th>SourceTotalRows</th>
+          <th>SourceFilePath</th>
+          <th>Action</th>
         </tr>
         </thead>
 
@@ -48,17 +45,14 @@
               <textarea id="view-saga-json-<%= each_json&.dig('batchId') %>" style="display: none;"><%= JSON.pretty_generate(@result.map { |i| i if i['batchId'].eql?(each_json&.dig('batchId')) }.compact[0]) %></textarea>
 
               <p class="text-dark-50 mb-5 text-center">
-                <button type="button" class="btn btn-primary p-1" data-bs-toggle="modal" data-bs-target="#viewsagajson" value="<%= each_json&.dig('batchId') %>" onclick="getIndex(this)">
-                  View Json
+                <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#viewsagajson" value="<%= each_json&.dig('batchId') %>" onclick="getIndex(this)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-text" viewBox="0 0 16 16">
+                    <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
+                    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>
+                  </svg>
                 </button>
               </p>
 
-              <a href="<%= elasticsearch_view_cluster_path %>" class="text-dark tooltip-arrow bs-tooltip-top" data-bs-toggle="tooltip modal" data-bs-placement="top" title="view cluster" data-bs-target="#searchquery">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-text" viewBox="0 0 16 16">
-                  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
-                  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>
-                </svg>
-              </a>
             </td>
           </tr>
           </tbody>
