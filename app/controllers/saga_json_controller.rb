@@ -4,21 +4,17 @@ class SagaJsonController < ApplicationController
   end
 
   def authenticate
-    # begin
-
-      res = get_sagas_api(params[:api_url], params[:api_key])
-      if res.success?
-        create_session(params)
-        flash[:notice] = "Connection Successful"
-        redirect_to saga_json_search_form_path
-      else
-        flash[:alert] = "Connection Failed try again"
-        redirect_to saga_json_login_path
-      end
-    # rescue
-    #   flash[:alert] = "Connection Failed try again"
-    #   redirect_to elasticsearch_login_path(params[:auth])
-    # end
+    res = get_sagas_api(params[:api_url], params[:api_key])
+    if res.success?
+      create_session(params)
+      file_path = Rails.root.join('tmp', "#{session[:uniq_id]}_response.json")
+      File.open(file_path, 'w') { |file| file.write(res.body) }
+      flash[:notice] = "Connection Successful"
+      redirect_to saga_json_search_form_path
+    else
+      flash[:alert] = "Connection Failed try again"
+      redirect_to saga_json_login_path
+    end
   end
 
   def logout
@@ -28,11 +24,17 @@ class SagaJsonController < ApplicationController
   end
 
   def search_form
-    # binding.pry
   end
 
   def search_results
-    sagas = get_sagas_api(session[:saga_json_url], session[:saga_json_key])
+    file_path = Rails.root.join('tmp', "#{session[:uniq_id]}_response.json")
+    unless File.exist?(file_path)
+      delete_session
+      redirect_to saga_json_login_path
+    end
+    file_contents = File.read(file_path)
+    sagas = JSON.parse(file_contents)
+
     input_sessions = %i[inputSjSource inputSjPlanYear inputSjBatchId inputSjStatus inputSjEntityType]
     input_sessions.map { |input| session[input] = params[input] }
 
@@ -71,6 +73,19 @@ class SagaJsonController < ApplicationController
     render status: :ok, body: nil
   end
 
+  def refresh_saga_data
+    res = get_sagas_api(session[:saga_json_url], session[:saga_json_key])
+    if res.success?
+      file_path = Rails.root.join('tmp', "#{session[:uniq_id]}_response.json")
+      File.open(file_path, 'w') { |file| file.write(res.body) }
+      flash[:notice] = "Refreshed"
+      redirect_to saga_json_search_form_path
+    else
+      flash[:alert] = "Failed to refresh try again"
+      redirect_to saga_json_login_path
+    end
+  end
+
   private
 
   def get_sagas_api(url, key)
@@ -86,6 +101,7 @@ class SagaJsonController < ApplicationController
   def create_session(params)
     session[:saga_json_url] = params[:api_url]
     session[:saga_json_key] = params[:api_key]
+    session[:uniq_id] = SecureRandom.uuid
     session[:logged_in] = true
 
     session[:elastic_username] = nil
@@ -96,6 +112,9 @@ class SagaJsonController < ApplicationController
   def delete_session
     session[:saga_json_url] = nil
     session[:saga_json_key] = nil
+    file_path = Rails.root.join('tmp', "#{session[:uniq_id]}_response.json")
+    File.delete(file_path) if File.exist?(file_path)
+    session[:uniq_id] = nil
     session[:logged_in] = false
   end
 

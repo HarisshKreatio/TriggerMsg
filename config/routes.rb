@@ -26,5 +26,7 @@ Rails.application.routes.draw do
   get 'saga_json/search_form', to: 'saga_json#search_form'
   delete 'saga_json/clear_search_session', to: 'saga_json#clear_search_session'
   get 'saga_json/search_results', to: 'saga_json#search_results'
+  
+  post 'saga_json/refresh_saga_data', to: 'saga_json#refresh_saga_data'
 
 end

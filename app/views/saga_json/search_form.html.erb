@@ -1,55 +1,58 @@
 <section class="vh-100 bg-light">
 
-    <h2 class="fw-bold mb-5 text-center pt-3">Input Search Values</h2>
+  <h2 class="fw-bold mb-3 text-center pt-3">Input Search Values</h2>
+  <div class="container text-center text-dark-50 mb-5">
+    <%= button_to 'Refresh Saga', saga_json_refresh_saga_data_path, class: "btn btn-primary p-1 tooltip-arrow bs-tooltip-top", type: "button", "data-bs-toggle": "tooltip", "data-bs-placement": "top", title: "Do it only if you think there might be a update happened in saga" %>
+  </div>
 
-    <div class="container p-2">
+  <div class="container p-2">
 
-      <%= form_tag({ controller: "saga_json", action: "search_results" }, method: "get", multipart: true, class: "row g-3", id: "myForm") do %>
+    <%= form_tag({ controller: "saga_json", action: "search_results" }, method: "get", multipart: true, class: "row g-3", id: "myForm") do %>
 
-        <div class="col-md-6">
-          <div class="form-outline form-white mb-4">
-            <%= text_field_tag :inputSjSource, session[:inputSjSource], placeholder: 'Source', class: 'form-control' %>
-          </div>
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputSjSource, session[:inputSjSource], placeholder: 'Source', class: 'form-control' %>
         </div>
+      </div>
 
-        <div class="col-md-6">
-          <div class="form-outline form-white mb-4">
-            <%= text_field_tag :inputSjPlanYear, session[:inputSjPlanYear], placeholder: 'PlanYear', class: 'form-control' %>
-          </div>
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputSjPlanYear, session[:inputSjPlanYear], placeholder: 'PlanYear', class: 'form-control' %>
         </div>
+      </div>
 
-        <div class="col-md-12">
-          <div class="form-outline form-white mb-4">
-            <%= text_field_tag :inputSjBatchId, session[:inputSjBatchId], placeholder: 'BatchId', class: 'form-control' %>
-          </div>
+      <div class="col-md-12">
+        <div class="form-outline form-white mb-4">
+          <%= text_field_tag :inputSjBatchId, session[:inputSjBatchId], placeholder: 'BatchId', class: 'form-control' %>
         </div>
-<%#binding.pry %>
-        <div class="col-md-6">
-          <div class="form-outline form-white mb-4">
-            <%= select_tag(:inputSjStatus, options_for_select([["Select Status", ""], ["Completed", "completed"], ["Started", "started"]], session[:inputSjStatus]), class: "select form-select form-control") %>
-          </div>
-        </div>
+      </div>
 
-        <div class="col-md-6">
-          <div class="form-outline form-white mb-4">
-            <%= select_tag(:inputSjEntityType, options_for_select([["Select Entity Type", ""], ["Both", "both"], ["Provider", "provider"], ["Organization", "organization"]], session[:inputSjEntityType]), class: "select form-select form-control") %>
-          </div>
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= select_tag(:inputSjStatus, options_for_select([["Select Status", ""], ["Completed", "completed"], ["Started", "started"]], session[:inputSjStatus]), class: "select form-select form-control") %>
         </div>
+      </div>
 
-        <div class="container text-center">
-          <button type="reset" class="btn btn-danger text-center col-md-2" id="reset-btn">Reset</button>
-          <%= submit_tag "Search", class: "btn btn-primary text-center col-md-2" %>
+      <div class="col-md-6">
+        <div class="form-outline form-white mb-4">
+          <%= select_tag(:inputSjEntityType, options_for_select([["Select Entity Type", ""], ["Both", "both"], ["Provider", "provider"], ["Organization", "organization"]], session[:inputSjEntityType]), class: "select form-select form-control") %>
         </div>
+      </div>
 
-      <% end %>
-    </div>
+      <div class="container text-center">
+        <button type="reset" class="btn btn-danger text-center col-md-2" id="reset-btn">Reset</button>
+        <%= submit_tag "Search", class: "btn btn-primary text-center col-md-2" %>
+      </div>
+
+    <% end %>
+  </div>
 
 
 </section>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('myForm').addEventListener('reset', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('myForm').addEventListener('reset', function () {
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             fetch('/saga_json/clear_search_session', {
                 method: 'DELETE',
