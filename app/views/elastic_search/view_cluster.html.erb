@@ -1,5 +1,8 @@
 <section class="vh-100 bg-light">
 
+  <h2 class="fw-bold mb-2 text-center pt-1">View Results</h2>
+  <p class="text-dark-50 mb-5 text-center"><%= session[:index_name] %></p>
+
   <% if session[:entity_type] == 'provider' %>
     <%= render 'elastic_search/view_cluster/provider_view_cluster' %>
   <% elsif session[:entity_type] == 'facility' %>
@@ -11,3 +14,29 @@
   <% end %>
 
 </section>
+
+<script>
+    function getJson() {
+        try {
+            return JSON.parse($('#single-doc-result').val());
+        } catch (ex) {
+            alert('Wrong JSON Format: ' + ex);
+        }
+    }
+
+    document.getElementById("json-single-doc-output").textContent = JSON.stringify(getJson(), undefined, 2);
+
+    let text = document.getElementById('json-single-doc-output').innerHTML;
+    const copyContent1 = async () => {
+        try {
+            await navigator.clipboard.writeText(text);
+            var originalCopyBtn = document.getElementById('copy-button-1').innerHTML
+            document.getElementById('copy-button-1').innerHTML = 'Copied';
+            setTimeout(() => {
+                document.getElementById('copy-button-1').innerHTML = originalCopyBtn;
+            }, 1000);
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+        }
+    }
+</script>
