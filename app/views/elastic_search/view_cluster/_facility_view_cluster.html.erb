@@ -16,16 +16,19 @@
   </div>
 
   <div class="scrollme">
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover" style="width: 150% !important;">
       <thead class="table-head">
       <tr>
         <th scope="col" class="col">SL.No</th>
         <th scope="col" class="col">Name</th>
+        <th scope="col" class="col">Alias</th>
         <th scope="col" class="col">NPI</th>
         <th scope="col" class="col">Address</th>
         <th scope="col" class="col">State</th>
         <th scope="col" class="col">City</th>
         <th scope="col" class="col">PostalCode</th>
+        <th scope="col" class="col">Location StableId</th>
+        <th scope="col" class="col">Network Name</th>
       </tr>
       </thead>
 
@@ -36,11 +39,14 @@
         <tr>
           <td><%= count += 1 %></td>
           <td><%= each_doc&.dig('facility', 'name') %></td>
+          <td><%= each_doc&.dig('facility', 'alias') %></td>
           <td><%= each_doc&.dig('facility', 'identifier')&.map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
           <td><%= each_doc&.dig('location', 0, 'address', 'line') %></td>
           <td><%= each_doc&.dig('location', 0, 'address', 'state') %></td>
           <td><%= each_doc&.dig('location', 0, 'address', 'city') %></td>
           <td><%= each_doc&.dig('location', 0, 'address', 'postalCode') %></td>
+          <td><%= each_doc&.dig('location', 0, 'stableId') %></td>
+          <td><%= each_doc&.dig('network', 0, 'name') %></td>
         </tr>
         </tbody>
       <% end %>

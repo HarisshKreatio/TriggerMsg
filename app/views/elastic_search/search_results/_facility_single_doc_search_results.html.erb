@@ -1,5 +1,5 @@
 <div class="scrollme">
-<table class="table table-bordered table-hover" style="width: 150% !important;">
+<table class="table table-bordered table-hover" style="width: 170% !important;">
   <thead class="table-head">
   <tr>
     <th scope="col" class="col">SL.No</th>
@@ -7,7 +7,10 @@
     <th scope="col" class="col">Doc Id</th>
     <th scope="col" class="col">StableId</th>
     <th scope="col" class="col">Name</th>
+    <th scope="col" class="col">Alias</th>
     <th scope="col" class="col">NPI</th>
+    <th scope="col" class="col">Location StableId</th>
+    <th scope="col" class="col">Network Name</th>
     <th scope="col" class="col">Action</th>
   </tr>
   </thead>
@@ -18,11 +21,14 @@
     <tbody>
     <tr>
       <td><%= count += 1 %></td>
-      <td><%= each_doc["_score"] %></td>
-      <td><%= each_doc["_source"]["id"] %></td>
-      <td><%= each_doc["_source"]["stableId"] %></td>
-      <td><%= each_doc["_source"]['facility']['name'] %></td>
-      <td><%= each_doc["_source"]['facility']['identifier'].map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
+      <td><%= each_doc&.dig('_score') %></td>
+      <td><%= each_doc&.dig('_source', 'id') %></td>
+      <td><%= each_doc&.dig('_source', 'stableId') %></td>
+      <td><%= each_doc&.dig('_source', 'facility', 'name') %></td>
+      <td><%= each_doc&.dig('_source', 'facility', 'alias') %></td>
+      <td><%= each_doc&.dig('_source' ,'facility', 'identifier')&.map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
+      <td><%= each_doc&.dig('_source' ,'location', 0, 'stableId') %></td>
+      <td><%= each_doc&.dig('_source' ,'network', 0, 'name') %></td>
       <td>
         <a href="<%= elasticsearch_view_cluster_path(doc_id: each_doc["_source"]["id"]) %>" class="text-dark tooltip-arrow bs-tooltip-top" data-bs-toggle="tooltip" data-bs-placement="top" title="view cluster">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-text" viewBox="0 0 16 16">
