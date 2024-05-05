@@ -107,6 +107,9 @@ class ElasticSearchController < ApplicationController
     session[:elastic_ip] = "#{params[:ip_address]}:#{params[:port]}"
     session[:logged_in] = true
 
+    file_path = Rails.root.join('tmp', "#{session[:uniq_id]}_response.json")
+    File.delete(file_path) if File.exist?(file_path)
+    session[:uniq_id] = nil
     session[:saga_json_url] = nil
     session[:saga_json_key] = nil
   end
