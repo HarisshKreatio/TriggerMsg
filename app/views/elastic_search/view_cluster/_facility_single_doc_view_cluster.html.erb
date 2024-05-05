@@ -1,5 +1,8 @@
 <textarea id="single-doc-result" style="display: none;"><%= JSON.pretty_generate(@index_document['_source']) %></textarea>
 
+<h2 class="fw-bold mb-2 text-center pt-1">View Results</h2>
+<p class="text-dark-50 mb-5 text-center"><%= session[:index_name] %></p>
+
 <div class="ms-3 m-2 text-center">
   <button class="btn p-1 text-center" onclick="copyContent1()" id="copy-button-1">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">

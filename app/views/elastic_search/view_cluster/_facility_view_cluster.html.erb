@@ -1,4 +1,4 @@
-<div class="container p-4">
+<div class="container">
 
   <h2 class="fw-bold mb-2 text-center pt-1">Facility Cluster</h2>
   <p class="text-dark-50 mb-1 text-center"><%= @index_document['_source']['stableId'] %> </p>
@@ -6,7 +6,8 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <p class="text-dark-50 mb-1">Total Records: <%= @index_document['_source']['organizationAffiliation'].count %></p>
+        <p class="text-dark-50 mb-1">Total
+          Records: <%= @index_document['_source']['organizationAffiliation'].count %></p>
       </div>
       <div class="col text-end">
         <p class="text-dark-50 mb-1"><%= session[:index_name] %></p>
@@ -14,36 +15,37 @@
     </div>
   </div>
 
-  <table class="table table-bordered table-hover">
-    <thead>
-    <tr>
-      <th scope="col" class="col">SL.No</th>
-      <th scope="col">Name</th>
-      <th scope="col">NPI</th>
-      <th scope="col">Address</th>
-      <th scope="col">State</th>
-      <th scope="col">City</th>
-      <th scope="col">PostalCode</th>
-    </tr>
-    </thead>
-
-    <% count = 0 %>
-
-    <% @index_document['_source']['organizationAffiliation'].each do |each_doc| %>
-      <tbody>
+  <div class="scrollme">
+    <table class="table table-bordered table-hover">
+      <thead class="table-head">
       <tr>
-        <td><%= count += 1 %></td>
-        <td><%= each_doc&.dig('facility', 'name') %></td>
-        <td><%= each_doc&.dig('facility', 'identifier')&.map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
-        <td><%= each_doc&.dig('location', 0, 'address', 'line') %></td>
-        <td><%= each_doc&.dig('location', 0, 'address', 'state') %></td>
-        <td><%= each_doc&.dig('location', 0, 'address', 'city') %></td>
-        <td><%= each_doc&.dig('location', 0, 'address', 'postalCode') %></td>
+        <th scope="col" class="col">SL.No</th>
+        <th scope="col" class="col">Name</th>
+        <th scope="col" class="col">NPI</th>
+        <th scope="col" class="col">Address</th>
+        <th scope="col" class="col">State</th>
+        <th scope="col" class="col">City</th>
+        <th scope="col" class="col">PostalCode</th>
       </tr>
-      </tbody>
-    <% end %>
+      </thead>
 
-  </table>
+      <% count = 0 %>
 
+      <% @index_document['_source']['organizationAffiliation'].each do |each_doc| %>
+        <tbody>
+        <tr>
+          <td><%= count += 1 %></td>
+          <td><%= each_doc&.dig('facility', 'name') %></td>
+          <td><%= each_doc&.dig('facility', 'identifier')&.map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
+          <td><%= each_doc&.dig('location', 0, 'address', 'line') %></td>
+          <td><%= each_doc&.dig('location', 0, 'address', 'state') %></td>
+          <td><%= each_doc&.dig('location', 0, 'address', 'city') %></td>
+          <td><%= each_doc&.dig('location', 0, 'address', 'postalCode') %></td>
+        </tr>
+        </tbody>
+      <% end %>
+
+    </table>
+  </div>
 
 </div>
