@@ -17,20 +17,22 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <section class="gradient-custom">
-  <%= render 'layouts/nav' %>
-  <% if notice %>
-    <div class="alert alert-success alert-dismissible fade show w-25 p-2 mx-auto" role="alert">
-      <%= notice %>
-      <button type="button" class="btn-close mx-auto p-2" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  <% end %>
-  <% if alert %>
-    <div class="alert alert-warning alert-dismissible fade show w-25 p-2 mx-auto" role="alert">
-      <%= alert %>
-      <button type="button" class="btn-close mx-auto p-2" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  <% end %>
-  <%= yield %>
+  <section class="vh-100 bg-light">
+    <%= render 'layouts/nav' %>
+    <% if notice %>
+      <div class="alert alert-success alert-dismissible fade show w-25 p-2 mx-auto" role="alert">
+        <%= notice %>
+        <button type="button" class="btn-close mx-auto p-2" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="alert alert-warning alert-dismissible fade show w-25 p-2 mx-auto" role="alert">
+        <%= alert %>
+        <button type="button" class="btn-close mx-auto p-2" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% end %>
+    <%= yield %>
+  </section>
 </section>
 
 <style>

@@ -7,7 +7,6 @@ Rails.application.routes.draw do
   post 'home/process_excel'
   post 'home/process_sources_trigger'
 
-
   get 'elasticsearch/login', to: 'elastic_search#login'
   post 'elasticsearch/authenticate', to: 'elastic_search#authenticate'
   delete 'elasticsearch/logout', to: 'elastic_search#logout'
@@ -26,7 +25,9 @@ Rails.application.routes.draw do
   get 'saga_json/search_form', to: 'saga_json#search_form'
   delete 'saga_json/clear_search_session', to: 'saga_json#clear_search_session'
   get 'saga_json/search_results', to: 'saga_json#search_results'
-  
+
   post 'saga_json/refresh_saga_data', to: 'saga_json#refresh_saga_data'
 
+  get 'result_hash/get_input', to: 'result_hash#get_input'
+  get 'result_hash/index', to: 'result_hash#index'
 end
