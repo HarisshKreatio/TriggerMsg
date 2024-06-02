@@ -9,7 +9,7 @@
         <div class="col d-flex align-items-center">
           <p class="text-dark-50 mb-0">Matched Count: <%= @result.count %></p>
         </div>
-        <div class="col d-flex align-items-center justify-content-end">
+        <div class="col d-flex align-items-center justify-content-end" data-bs-toggle="tooltip" data-bs-placement="top" title="Download excel">
           <%= form_tag({ controller: "saga_json", action: "download_saga_report" }, method: "post", multipart: true) do %>
             <%= text_field_tag :result, @result.to_json, required: true, hidden: true %>
             <button class="btn text-dark-50" type="submit">

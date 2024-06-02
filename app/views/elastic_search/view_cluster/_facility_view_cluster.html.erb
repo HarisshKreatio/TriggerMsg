@@ -16,7 +16,7 @@
   </div>
 
   <div class="scrollme">
-    <table class="table table-bordered table-hover" style="width: 150% !important;">
+    <table class="table table-bordered table-hover" style="width: 170% !important;">
       <thead class="table-head">
       <tr>
         <th scope="col" class="col">SL.No</th>
@@ -29,6 +29,7 @@
         <th scope="col" class="col">PostalCode</th>
         <th scope="col" class="col">Location StableId</th>
         <th scope="col" class="col">Network Name</th>
+        <th scope="col" class="col">View record</th>
       </tr>
       </thead>
 
@@ -47,11 +48,81 @@
           <td><%= each_doc&.dig('location', 0, 'address', 'postalCode') %></td>
           <td><%= each_doc&.dig('location', 0, 'stableId') %></td>
           <td><%= each_doc&.dig('network', 0, 'name') %></td>
+
+          <td>
+            <textarea id="view-each-record-<%= each_doc&.dig('id') %>" style="display: none;"><%= JSON.pretty_generate(each_doc) %></textarea>
+
+            <p class="text-dark-50 mb-0 text-center">
+              <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#vieweachclusterrecord" value="<%= each_doc&.dig('id') %>" onclick="getRecordIndex(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-text" viewBox="0 0 16 16">
+                  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
+                  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>
+                </svg>
+              </button>
+            </p>
+          </td>
+
         </tr>
         </tbody>
       <% end %>
-
     </table>
   </div>
 
+  <!-- View each record Modal -->
+  <div class="modal fade modal-lg" id="vieweachclusterrecord" data-bs-keyboard="false" tabindex="-1" aria-labelledby="vieweachclusterrecordLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-dark" id="vieweachclusterrecordLabel">Saga Json</h5>
+
+          <div class="ms-3">
+            <button class="btn p-1 text-center" onclick="copyContent()" id="copy-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+              </svg>
+              Copy Json
+            </button>
+          </div>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <pre id="output-json-each-record"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+
+<script>
+    function getJsonForRecord(indexValue) {
+        try {
+            return JSON.parse($('#view-each-record-' + indexValue).val());
+        } catch (ex) {
+            alert('Wrong JSON Format: ' + ex);
+        }
+    }
+
+    function getRecordIndex(button) {
+        var indexValue = button.value;
+        document.getElementById("output-json-each-record").textContent = JSON.stringify(getJsonForRecord(indexValue), undefined, 2);
+    }
+
+    const copyContent = async () => {
+        try {
+            let text = document.getElementById('output-json-each-record').innerHTML;
+            await navigator.clipboard.writeText(text);
+            var originalCopyBtn = document.getElementById('copy-button').innerHTML
+            document.getElementById('copy-button').innerHTML = 'Copied';
+            setTimeout(() => {
+                document.getElementById('copy-button').innerHTML = originalCopyBtn;
+            }, 1000);
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+        }
+    }
+
+</script>
