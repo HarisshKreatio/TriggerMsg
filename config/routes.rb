@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   get 'saga_json/search_results', to: 'saga_json#search_results'
 
   post 'saga_json/refresh_saga_data', to: 'saga_json#refresh_saga_data'
+  post 'saga_json/download_saga_report', to: 'saga_json#download_saga_report'
 
   get 'result_hash/get_input', to: 'result_hash#get_input'
   get 'result_hash/index', to: 'result_hash#index'

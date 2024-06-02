@@ -4,10 +4,16 @@
 
     <h2 class="fw-bold mb-2 text-center">Search Results</h2>
 
-    <div class="container">
+    <div class="container mb-2">
       <div class="row">
         <div class="col">
-          <p class="text-dark-50 mb-1">Matched Count: <%= @result.count %></p>
+          <p class="text-dark-50">Matched Count: <%= @result.count %></p>
+        </div>
+        <div class="col text-end">
+          <%= form_tag({ controller: "saga_json", action: "download_saga_report" }, method: "post", multipart: true) do %>
+            <%= text_field_tag :result, @result.to_json, required: true, hidden: true %>
+            <%= submit_tag "Download Excel", class: "btn text-dark-50 p-0 m-0" %>
+          <% end %>
         </div>
       </div>
     </div>
@@ -25,7 +31,7 @@
           <th>Provider</th>
           <th>Organization</th>
           <th>SourceTotalRows</th>
-          <th>SourceFilePath</th>
+          <th>FileName</th>
           <th>Action</th>
         </tr>
         </thead>
@@ -39,7 +45,7 @@
             <td><%= each_json&.dig('batchId') %></td>
             <td><%= each_json&.dig('sourceKey') %></td>
             <td><%= each_json&.dig('createdTs') %></td>
-            <td><%= each_json&.dig('status') %></td>
+            <td style="color: <%= each_json&.dig('status')&.downcase == 'completed' ? 'green' : 'red' %>"><%= each_json&.dig('status') %></td>
             <td><%= each_json&.dig('attrs', 'planYear') %></td>
 
             <% if each_json&.dig('fileContains').nil? || !each_json&.dig('fileContains').is_a?(Array) %>
@@ -83,7 +89,8 @@
             <% end %>
 
             <td><%= each_json&.dig('sourceTotalRows') %></td>
-            <td><%= each_json&.dig('sourceFilePath') %></td>
+            <td><%= each_json&.dig('sourceFilePath')&.split('/').last %></td>
+
             <td>
               <textarea id="view-saga-json-<%= each_json&.dig('batchId') %>" style="display: none;"><%= JSON.pretty_generate(@result.map { |i| i if i['batchId'].eql?(each_json&.dig('batchId')) }.compact[0]) %></textarea>
 
@@ -95,9 +102,9 @@
                   </svg>
                 </button>
               </p>
-
             </td>
           </tr>
+
           </tbody>
         <% end %>
 

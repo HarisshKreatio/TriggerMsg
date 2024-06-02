@@ -23,5 +23,5 @@ RUN echo "export RAILS_ENV=${env_name}" >> ~/.profile
 #RUN echo "export RAILS_SERVE_STATIC_FILES=true" >> ~/.profile
 
 RUN source ~/.profile
-EXPOSE 3000
-CMD ["rails", "server", "-b", "0.0.0.0"]
+EXPOSE 3050
+CMD ["rails", "server", "-b", "0.0.0.0", "-p", "3050"]

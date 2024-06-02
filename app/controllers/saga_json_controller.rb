@@ -86,6 +86,13 @@ class SagaJsonController < ApplicationController
     end
   end
 
+  def download_saga_report
+    result = JSON.parse(params[:result])
+    output_file_name = "saga_json_report_#{Time.now.strftime('%H:%M:%S')}.xlsx"
+    xlsx_package = generate_saga_xlsx(result)
+    send_data xlsx_package.to_stream.read, filename: output_file_name, type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  end
+
   private
 
   def get_sagas_api(url, key)
@@ -120,6 +127,37 @@ class SagaJsonController < ApplicationController
 
   def logged_in?
     session[:saga_json_url].present? && session[:saga_json_key].present? && session[:logged_in].to_s == 'true'
+  end
+
+  def generate_saga_xlsx(result)
+    xlsx = Axlsx::Package.new
+    workbook = xlsx.workbook
+    header_style = workbook.styles.add_style(bg_color: 'cccccc', b: true, border: Axlsx::STYLE_THIN_BORDER)
+    worksheet = workbook.add_worksheet
+    row_style = worksheet.styles.add_style(border: Axlsx::STYLE_THIN_BORDER)
+    status_styles = {
+      'completed' => workbook.styles.add_style(bg_color: '00a933', border: Axlsx::STYLE_THIN_BORDER), # Green
+      'started' => workbook.styles.add_style(bg_color: 'FF0000', border: Axlsx::STYLE_THIN_BORDER),    # Red
+    }
+    headers = ['SL.NO', 'BatchId', 'SourceKey', 'CreatedTs', 'Status', 'PlanYear', 'Provider', 'Organization', 'SourceTotalRows', 'SourceFilePath']
+    worksheet.add_row(headers, style: header_style)
+    row_num = 1
+    sl_no = 1
+    result.each do |each_json|
+      include_provider = each_json&.dig('fileContains')&.map(&:downcase)&.include?('provider') ? 'true' : 'false'
+      include_facility = each_json&.dig('fileContains')&.map(&:downcase)&.include?('organization') ? 'true' : 'false'
+      created_at = DateTime.parse(each_json&.dig('createdTs')).strftime("%d-%m-%Y") rescue ''
+      status = each_json&.dig('status')&.downcase
+
+      row_data = [sl_no, each_json&.dig('batchId'), each_json&.dig('sourceKey'), created_at, each_json&.dig('status') ,each_json&.dig('attrs', 'planYear'), include_provider, include_facility, each_json&.dig('sourceTotalRows'), each_json&.dig('sourceFilePath')]
+      row_styles = Array.new(headers.size, row_style)
+      row_styles[4] = status_styles[status]
+
+      worksheet.add_row(row_data, style: row_styles)
+      row_num += 1
+      sl_no += 1
+    end
+    xlsx
   end
 
 end
