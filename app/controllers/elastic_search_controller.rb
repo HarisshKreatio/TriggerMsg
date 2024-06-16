@@ -186,64 +186,11 @@ class ElasticSearchController < ApplicationController
   end
 
   def form_elastic_query(params, entity_type)
-    must = []
-    must << ElasticSearchHelper::Facility.name(params[:inputName]) if params[:inputName].present?
-    must << ElasticSearchHelper::Facility.identifier(params[:inputNpi]) if params[:inputNpi].present?
-
-    must << ElasticSearchHelper::Facility.source_name(params[:inputSource]) if params[:inputSource].present?
-    must << ElasticSearchHelper::Facility.updated_date(params[:inputUpdatedDate]) if params[:inputUpdatedDate].present?
-    must << ElasticSearchHelper::Facility.stable_id(params[:inputStableId]) if params[:inputStableId].present?
-
-    must << ElasticSearchHelper::Facility.loc_stable_id(params[:inputLocStableId]) if params[:inputLocStableId].present?
-    must << ElasticSearchHelper::Facility.address_text(params[:inputAddrText]) if params[:inputAddrText].present?
-    must << ElasticSearchHelper::Facility.address_city(params[:inputAddrCity]) if params[:inputAddrCity].present?
-    must << ElasticSearchHelper::Facility.address_state(params[:inputAddrState]) if params[:inputAddrState].present?
-    must << ElasticSearchHelper::Facility.address_zip(params[:inputAddrZip]) if params[:inputAddrZip].present?
-
-    search_size = params[:inputSize].present? ? params[:inputSize].to_i : 10000
-
-    if must.present?
-      if entity_type == 'facility'
-        query_for_facility(search_size, must)
-      elsif entity_type == 'facility_single_doc'
-        query_for_facility_single_doc(search_size, must)
-      end
+    if %w[facility facility_single_doc].include?(entity_type)
+      ElasticSearchHelper::Facility.form_all_facility_elastic_query(params, entity_type)
     else
-      {
-        "size": search_size,
-        "query": {
-          "match_all": {}
-        }
-      }
+      ElasticSearchHelper::Provider.form_all_provider_elastic_query(params, entity_type)
     end
-  end
-
-  def query_for_facility(search_size, must)
-    {
-      "size": search_size,
-      "query": {
-        "nested": {
-          "path": "organizationAffiliation",
-          "query": {
-            "bool": {
-              "must": must
-            }
-          }
-        }
-      }
-    }
-  end
-
-  def query_for_facility_single_doc(search_size, must)
-    must = JSON.parse(must.to_json.gsub('organizationAffiliation.', ''))
-    {
-      "size": search_size,
-      "query": {
-        "bool": {
-          "must": must
-        }
-      }
-    }
   end
 
 end

@@ -18,11 +18,11 @@
       <tbody>
       <tr>
         <td><%= count += 1 %></td>
-        <td><%= each_doc["_score"] %></td>
-        <td><%= each_doc["_source"]['organizationAffiliation'].count %></td>
-        <td><%= each_doc["_source"]["stableId"] %></td>
-        <td><%= each_doc["_source"]['organizationAffiliation'][0]['facility']['name'] %></td>
-        <td><%= each_doc["_source"]['organizationAffiliation'][0]['facility']['identifier'].map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
+        <td><%= each_doc&.dig('_score') %></td>
+        <td><%= each_doc&.dig('_source', 'organizationAffiliation')&.count %></td>
+        <td><%= each_doc&.dig('_source', 'stableId') %></td>
+        <td><%= each_doc&.dig('_source', 'organizationAffiliation', 0, 'facility', 'name') %></td>
+        <td><%= each_doc&.dig('_source', 'organizationAffiliation', 0, 'facility', 'identifier')&.map { |i| i['value'] if i['type'] == 'NPI' }&.compact[0] %></td>
         <td>
           <p class="text-dark-50 mb-0 text-center">
             <a href="<%= elasticsearch_view_cluster_path(doc_id: each_doc["_source"]["stableId"]) %>" class="text-dark tooltip-arrow bs-tooltip-top" data-bs-toggle="tooltip" data-bs-placement="top" title="view cluster">
