@@ -49,7 +49,7 @@
             <td><%= count += 1 %></td>
             <td><%= each_json&.dig('batchId') %></td>
             <td><%= each_json&.dig('sourceKey') %></td>
-            <td><%= each_json&.dig('createdTs') %></td>
+            <td><%= DateTime.parse(each_json&.dig('createdTs')).strftime("%b %d, %Y %H:%M:%S %Z") rescue ''%></td>
             <td style="color: <%= each_json&.dig('status')&.downcase == 'completed' ? 'green' : 'red' %>"><%= each_json&.dig('status') %></td>
             <td><%= each_json&.dig('attrs', 'planYear') %></td>
 

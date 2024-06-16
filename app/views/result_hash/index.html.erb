@@ -4,11 +4,24 @@
 
     <h3 class="fw-bold m-3 text-center">RESULT HASH ANALYSIS</h3>
 
+    <div class="text-end mb-3">
+      <button id="collapseAll" class="btn" title="Collapse All">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-angle-contract" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M.172 15.828a.5.5 0 0 0 .707 0l4.096-4.096V14.5a.5.5 0 1 0 1 0v-3.975a.5.5 0 0 0-.5-.5H1.5a.5.5 0 0 0 0 1h2.768L.172 15.121a.5.5 0 0 0 0 .707M15.828.172a.5.5 0 0 0-.707 0l-4.096 4.096V1.5a.5.5 0 1 0-1 0v3.975a.5.5 0 0 0 .5.5H14.5a.5.5 0 0 0 0-1h-2.768L15.828.879a.5.5 0 0 0 0-.707"/>
+        </svg>
+      </button>
+      <button id="expandAll" class="btn" title="Expand All">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-angle-expand" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"/>
+        </svg>
+      </button>
+    </div>
+
     <% accordian_ids_count = 0 %>
 
     <% @result_hashes.each do |result_hash| %>
       <% accordian_ids_count += 1 %>
-      <div class="accordion" id="accordionPanelsStayOpenExample">
+      <div class="accordion mb-1" id="accordionPanelsStayOpenExample">
         <div class="accordion-item">
           <h2 class="accordion-header" id="<%= "panelsStayOpen-heading#{accordian_ids_count}" %>" >
             <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="<%= "#panelsStayOpen-collapse#{accordian_ids_count}" %>" aria-expanded="false" aria-controls="<%= "panelsStayOpen-collapse#{accordian_ids_count}" %>">
@@ -89,3 +102,33 @@
 
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const collapseAllButton = document.getElementById('collapseAll');
+        const expandAllButton = document.getElementById('expandAll');
+
+        collapseAllButton.addEventListener('click', function () {
+            const accordions = document.querySelectorAll('.accordion-collapse');
+            accordions.forEach(accordion => {
+                if (accordion.classList.contains('show')) {
+                    const button = accordion.previousElementSibling.querySelector('.accordion-button');
+                    button.classList.add('collapsed');
+                    button.setAttribute('aria-expanded', 'false');
+                    accordion.classList.remove('show');
+                }
+            });
+        });
+
+        expandAllButton.addEventListener('click', function () {
+            const accordions = document.querySelectorAll('.accordion-collapse');
+            accordions.forEach(accordion => {
+                if (!accordion.classList.contains('show')) {
+                    const button = accordion.previousElementSibling.querySelector('.accordion-button');
+                    button.classList.remove('collapsed');
+                    button.setAttribute('aria-expanded', 'true');
+                    accordion.classList.add('show');
+                }
+            });
+        });
+    });
+</script>
