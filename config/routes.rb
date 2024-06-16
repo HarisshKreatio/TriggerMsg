@@ -30,5 +30,7 @@ Rails.application.routes.draw do
   post 'saga_json/download_saga_report', to: 'saga_json#download_saga_report'
 
   get 'result_hash/get_input', to: 'result_hash#get_input'
+  post 'result_hash/process_input', to: 'result_hash#process_input'
   get 'result_hash/index', to: 'result_hash#index'
+  delete 'result_hash/clear_result_hash', to: 'result_hash#clear_result_hash'
 end

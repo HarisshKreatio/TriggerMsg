@@ -2,31 +2,40 @@
 
   <div class="container">
 
-    <h2 class="fw-bold mb-2 text-center">Result Hash Analysis</h2>
-    <h6 class="fw-bold mb-2 text-center"><%= @environment %> | <%= @tenant %> | <%= @index_name %></h6>
+    <h3 class="fw-bold m-3 text-center">RESULT HASH ANALYSIS</h3>
 
-    <div class="container">
-      <div class="row">
-        <div class="col">
-          <p class="text-dark-50 mb-1">Source Count: <%= @result_hash.count %></p>
+    <% accordian_ids_count = 0 %>
+
+    <% @result_hashes.each do |result_hash| %>
+      <% accordian_ids_count += 1 %>
+      <div class="accordion" id="accordionPanelsStayOpenExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="<%= "panelsStayOpen-heading#{accordian_ids_count}" %>" >
+            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="<%= "#panelsStayOpen-collapse#{accordian_ids_count}" %>" aria-expanded="false" aria-controls="<%= "panelsStayOpen-collapse#{accordian_ids_count}" %>">
+              <%= accordian_ids_count %>. <%= result_hash['ENV'].upcase %> | <%= result_hash['tenant'].downcase %> | <%= result_hash['index_name'] %>
+            </button>
+          </h2>
+          <div id="<%="panelsStayOpen-collapse#{accordian_ids_count}"%>" class="accordion-collapse collapse" aria-labelledby=<%= "panelsStayOpen-collapse#{accordian_ids_count}" %>>
+            <div class="accordion-body">
+              <% if result_hash['entity_type'] == 'tenant_index' %>
+                <%= render 'result_hash/index_partials/tenant_index', locals: { result_hash: result_hash, count: accordian_ids_count } %>
+              <% elsif result_hash['entity_type'] == 'single_doc_index' %>
+                <%= render 'result_hash/index_partials/single_doc_index', locals: { result_hash: result_hash } %>
+              <% end %>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-
-    <% if @entity_type == 'tenant_index' %>
-      <%= render 'result_hash/index_partials/tenant_index' %>
-    <% elsif @entity_type == 'single_doc_index' %>
-      <%= render 'result_hash/index_partials/single_doc_index' %>
     <% end %>
 
   </div>
 
-  <!-- Saga Json Modal -->
+  <!-- Result Json Modal -->
   <div class="modal fade modal-lg" id="viewresulthash" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewresulthashLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title text-dark" id="viewresulthashLabel">Saga Json</h5>
+          <h5 class="modal-title text-dark" id="viewresulthashLabel">Result Json</h5>
 
           <div class="ms-3">
             <button class="btn p-1 text-center" onclick="copyContent()" id="copy-button">

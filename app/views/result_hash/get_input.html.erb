@@ -1,19 +1,23 @@
 <section class="vh-100 bg-light">
 
-  <h2 class="fw-bold mb-3 text-center pt-3">Input Result Hash</h2>
+  <h2 class="fw-bold mb-3 text-center pt-3">INPUT RESULT HASH</h2>
+  <div class="container text-center text-dark-50 mb-2 d-flex justify-content-center gap-2">
+    <%= button_to 'Clear All Analysis', result_hash_clear_result_hash_path, method: :delete ,class: "btn btn-danger p-1 tooltip-arrow bs-tooltip-top", type: "button", "data-bs-toggle": "tooltip", "data-bs-placement": "top", title: "Clear all existing result hashes" %>
+    <%= button_to 'View Analysis', result_hash_index_path, method: :get, class: "btn btn-success p-1 tooltip-arrow bs-tooltip-top", type: "button", "data-bs-toggle": "tooltip", "data-bs-placement": "top", title: "Go to result hash analysis page" %>
+  </div>
 
   <div class="container p-2">
-    <%= form_tag({ controller: "result_hash", action: "index" }, method: "get", multipart: true, class: "row g-3", id: "myForm") do %>
+    <%= form_tag({ controller: "result_hash", action: "process_input" }, method: "post", multipart: true, class: "row g-3", id: "myForm") do %>
 
       <div class="col-md-12">
         <div class="form-outline form-white mb-4">
-          <%= text_area_tag :inputResultHash, nil, placeholder: 'Result Hash', class: 'form-control', style: 'height: 500px;', required: true %>
+          <%= text_area_tag :inputResultHash, nil, placeholder: 'Result Hash', class: 'form-control', style: 'height: 400px;', required: true %>
         </div>
       </div>
 
       <div class="container text-center">
         <button type="reset" class="btn btn-danger text-center col-md-2" id="reset-btn">Reset</button>
-        <%= submit_tag "Search", class: "btn btn-primary text-center col-md-2" %>
+        <%= submit_tag "Analyse", class: "btn btn-primary text-center col-md-2" %>
       </div>
 
     <% end %>
