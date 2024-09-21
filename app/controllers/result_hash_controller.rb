@@ -12,6 +12,7 @@ class ResultHashController < ApplicationController
 
       result_hash_checked = {}
       file_path = session[:uniq_result_hash_path]
+      file_path = create_empty_file unless file_path.present? && File.exist?(file_path)
       parsed_result_hashes = JSON.parse(File.read(file_path))
       if result_hash.is_a?(Hash)
         result_hash['entity_type'] = get_entity_type(result_hash['index_name'])
@@ -49,7 +50,7 @@ class ResultHashController < ApplicationController
 
   def index
     file_path = session[:uniq_result_hash_path]
-    @result_hashes = JSON.parse(File.read(file_path))
+    @result_hashes = JSON.parse(File.read(file_path)) if file_path.present? && File.exist?(file_path)
     unless @result_hashes.present?
       flash[:alert] = "No existing result hashes to Show"
       redirect_to result_hash_get_input_path
@@ -76,6 +77,15 @@ class ResultHashController < ApplicationController
   end
 
   private
+
+  def create_empty_file
+    uniq_id = SecureRandom.uuid
+    session[:uniq_result_hash_id] = uniq_id
+    file_path = Rails.root.join('tmp', "#{session[:uniq_result_hash_id]}_result_hashess.json")
+    session[:uniq_result_hash_path] = file_path
+    File.open(file_path, 'w') { |file| file.write([]) }
+    file_path
+  end
 
   def clear_all_tmp_result_hash
     public_directory = Rails.root.join('tmp')
