@@ -9,23 +9,36 @@ class ResultHashController < ApplicationController
   def process_input
     begin
       result_hash = JSON.parse(params[:inputResultHash])
-      if not result_hash.is_a?(Hash)
-        flash[:alert] = "Please provide a JSON object"
-        redirect_to result_hash_get_input_path
-      elsif not result_hash['tenant'].present? && result_hash['ENV'].present? && result_hash['index_name'].present?
-        flash[:alert] = "Missing tenant/ENV/Index_name"
-        redirect_to result_hash_get_input_path
-      else
+
+      result_hash_checked = {}
+      file_path = session[:uniq_result_hash_path]
+      parsed_result_hashes = JSON.parse(File.read(file_path))
+      if result_hash.is_a?(Hash)
         result_hash['entity_type'] = get_entity_type(result_hash['index_name'])
         if result_hash['entity_type'] == 'tenant_index'
           result_hash_checked = tenant_index(result_hash)
         else
           result_hash_checked = single_doc_index(result_hash)
         end
+        parsed_result_hashes << result_hash_checked
+      elsif result_hash.is_a?(Array)
+        result_hash.each do |e_hash|
+          unless e_hash['tenant'].present? && e_hash['ENV'].present? && e_hash['index_name'].present?
+            flash[:alert] = "Missing tenant/ENV/Index_name"
+            redirect_to result_hash_get_input_path
+          end
+          e_hash['entity_type'] = get_entity_type(e_hash['index_name'])
+          if e_hash['entity_type'] == 'tenant_index'
+            result_hash_checked = tenant_index(e_hash)
+          else
+            result_hash_checked = single_doc_index(e_hash)
+          end
+          parsed_result_hashes << result_hash_checked
+        end
+      else
+        flash[:alert] = "Please provide a JSON object"
+        redirect_to result_hash_get_input_path
       end
-      file_path = session[:uniq_result_hash_path]
-      parsed_result_hashes = JSON.parse(File.read(file_path))
-      parsed_result_hashes << result_hash_checked
       File.open(file_path, 'w') { |file| file.write(parsed_result_hashes.to_json) }
       redirect_to result_hash_index_path
     rescue
