@@ -24,8 +24,14 @@
       <div class="accordion mb-1" id="accordionPanelsStayOpenExample">
         <div class="accordion-item">
           <h2 class="accordion-header" id="<%= "panelsStayOpen-heading#{accordian_ids_count}" %>" >
-            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="<%= "#panelsStayOpen-collapse#{accordian_ids_count}" %>" aria-expanded="false" aria-controls="<%= "panelsStayOpen-collapse#{accordian_ids_count}" %>">
-              <%= accordian_ids_count %>. <%= result_hash['ENV'].upcase %> | <%= result_hash['tenant'].downcase %> | <%= result_hash['index_name'] %>
+            <button class="accordion-button collapsed fw-bold d-flex justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="<%= "#panelsStayOpen-collapse#{accordian_ids_count}" %>" aria-expanded="false" aria-controls="<%= "panelsStayOpen-collapse#{accordian_ids_count}" %>" style="color: <%= result_hash&.dig('accordion_head_colour') %>;">
+              <div class="flex-grow-1">
+                <%= accordian_ids_count %>. <%= result_hash['ENV'].upcase %> | <%= result_hash['tenant'].downcase %>
+                | <%= result_hash['index_name'] %>
+              </div>
+              <div class="pe-2">
+                Total: <%= result_hash['total_source_count'] %> <%= result_hash&.dig('red_count') != 0 ? "| Error: #{result_hash&.dig('red_count')}" : '' %>
+              </div>
             </button>
           </h2>
           <div id="<%="panelsStayOpen-collapse#{accordian_ids_count}"%>" class="accordion-collapse collapse" aria-labelledby=<%= "panelsStayOpen-collapse#{accordian_ids_count}" %>>

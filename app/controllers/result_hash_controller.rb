@@ -67,7 +67,7 @@ class ResultHashController < ApplicationController
   def clear_all_tmp_result_hash
     public_directory = Rails.root.join('tmp')
     Dir.glob(File.join(public_directory, '*')).each do |file_path|
-      if File.basename(file_path).ends_with?("_result_hashess.json")
+      if File.basename(file_path) == "#{session[:uniq_result_hash_id]}_result_hashess.json"
         FileUtils.rm_rf(file_path)
       end
     end
@@ -87,6 +87,7 @@ class ResultHashController < ApplicationController
   end
 
   def tenant_index(result_hash)
+    red_count = 0
     result_hash.each do |key, value|
       next if %w[entity tenant ENV index_name].include?(key)
 
@@ -101,16 +102,22 @@ class ResultHashController < ApplicationController
 
         if value['difference'] != 0 || value['difference'].to_s == 'false'
           value['outputColor'] = 'red'
+          red_count += 1
           value['note'] = value['difference'] < 0 ? 'Old records are still present in index' : 'Few records have to be send for Index'
         else
           value['outputColor'] = 'green'
         end
       end
     end
+    result_hash['accordion_head_colour'] = red_count == 0 ? 'black' : 'red'
+    result_hash['red_count'] = red_count
+    excluded_keys = %w[entity tenant ENV index_name location entity_type accordion_head_colour red_count]
+    result_hash['total_source_count'] = result_hash.keys.reject { |key| excluded_keys.include?(key) }.count
     result_hash
   end
 
   def single_doc_index(result_hash)
+    red_count = 0
     result_hash.each do |key, value|
       next if %w[entity tenant ENV index_name].include?(key)
 
@@ -125,12 +132,17 @@ class ResultHashController < ApplicationController
 
         if value['difference'] != 0 || value['difference'].to_s == 'false'
           value['outputColor'] = 'red'
+          red_count += 1
           value['note'] = value['difference'] < 0 ? 'Old records are still present in index' : 'Few records have to be send for Index'
         else
           value['outputColor'] = 'green'
         end
       end
     end
+    result_hash['accordion_head_colour'] = red_count == 0 ? 'black' : 'red'
+    result_hash['red_count'] = red_count
+    excluded_keys = %w[entity tenant ENV index_name location entity_type accordion_head_colour red_count]
+    result_hash['total_source_count'] = result_hash.keys.reject { |key| excluded_keys.include?(key) }.count
     result_hash
   end
 

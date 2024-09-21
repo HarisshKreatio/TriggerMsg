@@ -1,7 +1,7 @@
 <% result_hash = local_assigns.as_json['locals']['result_hash'] %>
 <% result_hash_count = local_assigns.as_json['locals']['count'] %>
 
-<% %w[entity tenant ENV index_name location entity_type].each { |key| result_hash.delete(key) } %>
+<% %w[entity tenant ENV index_name location entity_type accordion_head_colour red_count total_source_count].each { |key| result_hash.delete(key) } %>
 <% source_count = result_hash.count %>
 
 <div class="container">
