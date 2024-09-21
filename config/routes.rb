@@ -33,4 +33,5 @@ Rails.application.routes.draw do
   post 'result_hash/process_input', to: 'result_hash#process_input'
   get 'result_hash/index', to: 'result_hash#index'
   delete 'result_hash/clear_result_hash', to: 'result_hash#clear_result_hash'
+  delete 'result_hash/clear_specific_result_hash', to: 'result_hash#clear_specific_result_hash'
 end

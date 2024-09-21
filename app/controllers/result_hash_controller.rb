@@ -62,6 +62,19 @@ class ResultHashController < ApplicationController
     redirect_to result_hash_get_input_path
   end
 
+  def clear_specific_result_hash
+    result_hash_id = params['result_hash_id']
+    file_path = session[:uniq_result_hash_path]
+    result_hashes = JSON.parse(File.read(file_path))
+    result_hashes.delete_if { |each_hash| each_hash['result_hash_id'] == result_hash_id }
+    File.open(file_path, 'w') { |file| file.write(result_hashes.to_json) }
+    if result_hashes.present?
+      redirect_to result_hash_index_path
+    else
+      redirect_to result_hash_get_input_path
+    end
+  end
+
   private
 
   def clear_all_tmp_result_hash
@@ -109,9 +122,10 @@ class ResultHashController < ApplicationController
         end
       end
     end
+    result_hash['result_hash_id'] = SecureRandom.uuid
     result_hash['accordion_head_colour'] = red_count == 0 ? 'black' : 'red'
     result_hash['red_count'] = red_count
-    excluded_keys = %w[entity tenant ENV index_name location entity_type accordion_head_colour red_count]
+    excluded_keys = %w[entity tenant ENV index_name location entity_type accordion_head_colour red_count result_hash_id]
     result_hash['total_source_count'] = result_hash.keys.reject { |key| excluded_keys.include?(key) }.count
     result_hash
   end
@@ -139,9 +153,10 @@ class ResultHashController < ApplicationController
         end
       end
     end
+    result_hash['result_hash_id'] = SecureRandom.uuid
     result_hash['accordion_head_colour'] = red_count == 0 ? 'black' : 'red'
     result_hash['red_count'] = red_count
-    excluded_keys = %w[entity tenant ENV index_name location entity_type accordion_head_colour red_count]
+    excluded_keys = %w[entity tenant ENV index_name location entity_type accordion_head_colour red_count result_hash_id]
     result_hash['total_source_count'] = result_hash.keys.reject { |key| excluded_keys.include?(key) }.count
     result_hash
   end
