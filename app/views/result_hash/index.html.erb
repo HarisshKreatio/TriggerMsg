@@ -2,7 +2,10 @@
 
   <div class="container">
 
-    <h3 class="fw-bold m-3 text-center">RESULT HASH ANALYSIS</h3>
+    <h3 class="fw-bold mt-3 text-center">RESULT HASH ANALYSIS</h3>
+    <div class="d-flex justify-content-center mb-3">
+      <%= button_to 'Add New', result_hash_get_input_path, method: :get, class: "btn btn-success p-1 tooltip-arrow bs-tooltip-top", type: "button", "data-bs-toggle": "tooltip", "data-bs-placement": "top", title: "Go to result hash input page" %>
+    </div>
 
     <div class="text-end mb-3">
       <button id="collapseAll" class="btn" title="Collapse All">
