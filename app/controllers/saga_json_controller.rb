@@ -35,7 +35,7 @@ class SagaJsonController < ApplicationController
     file_contents = File.read(file_path)
     sagas = JSON.parse(file_contents)
 
-    input_sessions = %i[inputSjSource inputSjPlanYear inputSjBatchId inputSjStatus inputSjEntityType]
+    input_sessions = %i[inputSjSource inputSjPlanYear inputSjBatchId inputSjStatus inputSjEntityType inputSjSize]
     input_sessions.map { |input| session[input] = params[input] }
 
     conditions = {}
@@ -64,11 +64,13 @@ class SagaJsonController < ApplicationController
       end
     end
     result.compact!
-    @result = result.sort_by { |hash| DateTime.parse(hash['createdTs']) }.reverse
+    sorted_result = result.sort_by { |hash| DateTime.parse(hash['createdTs']) }.reverse
+    @result = params[:inputSjSize].present? ? sorted_result.first(params[:inputSjSize].to_i) : sorted_result
   end
 
   def clear_search_session
     input_sessions = %w[inputSjSource inputSjPlanYear inputSjBatchId inputSjStatus inputSjEntityType]
+    session[:inputSjSize] = '100'
     input_sessions.map { |input| session[input] = nil }
     render status: :ok, body: nil
   end

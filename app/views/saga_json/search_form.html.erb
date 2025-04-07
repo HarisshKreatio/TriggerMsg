@@ -27,15 +27,21 @@
         </div>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-md-5">
         <div class="form-outline form-white mb-4">
           <%= select_tag(:inputSjStatus, options_for_select([["Select Status", ""], ["Completed", "completed"], ["Started", "started"]], session[:inputSjStatus]), class: "select form-select form-control") %>
         </div>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-md-5">
         <div class="form-outline form-white mb-4">
           <%= select_tag(:inputSjEntityType, options_for_select([["Select Entity Type", ""], ["Both", "both"], ["Provider", "provider"], ["Organization", "organization"]], session[:inputSjEntityType]), class: "select form-select form-control") %>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="form-outline form-white mb-4">
+          <%= number_field_tag :inputSjSize, session[:inputSjSize], placeholder: 'Size', class: 'form-control' %>
         </div>
       </div>
 
@@ -64,6 +70,7 @@
                     document.querySelector('#myForm input[name="inputSjSource"]').value = '';
                     document.querySelector('#myForm input[name="inputSjPlanYear"]').value = '';
                     document.querySelector('#myForm input[name="inputSjBatchId"]').value = '';
+                    document.querySelector('#myForm input[name="inputSjSize"]').value = '100';
                     // document.querySelector('#myForm input[name="inputSjStatus"]').value = '';
                     // document.querySelector('#myForm input[name="inputSjEntityType"]').value = '';
                 }
