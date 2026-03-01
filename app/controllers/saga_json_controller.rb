@@ -40,12 +40,17 @@ class SagaJsonController < ApplicationController
 
     conditions = {}
 
-    conditions['sourceKey'] = params[:inputSjSource] if params[:inputSjSource].present?
+    # conditions['sourceKey'] = params[:inputSjSource] if params[:inputSjSource].present?
     conditions['batchId'] = params[:inputSjBatchId] if params[:inputSjBatchId].present?
     conditions['status'] = params[:inputSjStatus] if params[:inputSjStatus].present?
 
     result = sagas.map do |each_json|
       each_json if conditions.all? { |field, value| each_json[field].eql?(value) }
+    end
+    result.compact!
+
+    if params[:inputSjSource].present?
+      result = result.map { |each_json| each_json if each_json.dig('sourceKey').starts_with?(params[:inputSjSource]) }
     end
     result.compact!
 
@@ -141,7 +146,7 @@ class SagaJsonController < ApplicationController
       'completed' => workbook.styles.add_style(bg_color: '00a933', border: Axlsx::STYLE_THIN_BORDER), # Green
       'started' => workbook.styles.add_style(bg_color: 'FF0000', border: Axlsx::STYLE_THIN_BORDER),    # Red
     }
-    headers = ['SL.NO', 'BatchId', 'SourceKey', 'CreatedTs', 'Status', 'PlanYear', 'Provider', 'Organization', 'SourceTotalRows', 'SourceFilePath']
+    headers = ['SL.NO', 'BatchId', 'SourceKey', 'CreatedTs', 'Status', 'PlanYear', 'Provider', 'Organization', 'SourceTotalRows', 'SourceFilePath', 'rowsTermed', 'rowsSuppress', 'failures']
     worksheet.add_row(headers, style: header_style)
     row_num = 1
     sl_no = 1
@@ -151,7 +156,7 @@ class SagaJsonController < ApplicationController
       created_at = DateTime.parse(each_json&.dig('createdTs')).strftime("%d-%m-%Y") rescue ''
       status = each_json&.dig('status')&.downcase
 
-      row_data = [sl_no, each_json&.dig('batchId'), each_json&.dig('sourceKey'), created_at, each_json&.dig('status') ,each_json&.dig('attrs', 'planYear'), include_provider, include_facility, each_json&.dig('sourceTotalRows'), each_json&.dig('sourceFilePath')]
+      row_data = [sl_no, each_json&.dig('batchId'), each_json&.dig('sourceKey'), created_at, each_json&.dig('status') ,each_json&.dig('attrs', 'planYear'), include_provider, include_facility, each_json&.dig('sourceTotalRows'), each_json&.dig('sourceFilePath') ,each_json&.dig( 'provider' , 'suppressionReport', 'rowsTermed') ,each_json&.dig( 'provider' , 'suppressionReport', 'rowsSuppress') ,each_json&.dig( 'provider' , 'suppressionReport', 'failures')]
       row_styles = Array.new(headers.size, row_style)
       row_styles[4] = status_styles[status]
 
